@@ -501,7 +501,7 @@
       forward.addScaledVector(up, -forward.dot(up));
     }
     forward.normalize();
-    var pos = spawn.clone().addScaledVector(forward, 6.2).normalize().multiplyScalar(radius);
+    var pos = spawn.clone().addScaledVector(forward, 4.6).normalize().multiplyScalar(radius);
     var toward = spawn.clone().sub(pos);
     toward.addScaledVector(up, -toward.dot(up)).normalize();
     var right = new C.Vec3().crossVectors(up, toward).normalize();
@@ -516,69 +516,76 @@
     return { pos: pos, up: up, forward: toward, right: right, quat: quat };
   }
 
-  function buildCenter(box) {
-    box(P.slate, 0, 7.2, 0.10, 6.2, 0, 0.05, 0);
-    box(P.cream, 0, 7.0, 0.16, 6.0, 0, 0.08, 0);
-    box(P.teal, 0, 7.1, 0.05, 0.10, 0, 0.16, 3.0);
-    box(P.cream, 0, 7.0, 3.2, 0.18, 0, 1.64, -3.05);
-    box(P.teal, 0, 6.8, 0.65, 0.06, 0, 0.46, -2.95);
-    box(P.slate, 0, 7.1, 0.08, 0.22, 0, 3.24, -3.05);
-    box(P.cream, 0, 0.18, 3.2, 5.8, -3.42, 1.64, 0);
-    box(P.cream, 0, 0.18, 3.2, 5.8, 3.42, 1.64, 0);
-    box(P.mustard, 0, 7.2, 0.18, 6.2, 0, 3.30, 0);
-    box(P.cream, 0, 7.0, 0.10, 6.0, 0, 3.38, 0);
-    box(P.coral, 0, 7.2, 0.20, 0.18, 0, 3.28, 3.05);
-    box(P.cream, 0, 7.0, 0.45, 0.18, 0, 2.80, 3.0);
-    box(P.slate, 0, 5.4, 0.90, 0.15, 0, 3.95, 3.05);
-    box(P.cream, 0, 5.1, 0.70, 0.04, 0, 3.95, 3.14);
-    box(P.mustard, 0, 1.8, 0.42, 0.04, -1.5, 3.95, 3.17);
-    box(P.coral, 0, 0.38, 0.38, 0.04, -0.45, 3.95, 3.17);
-    box(P.teal, 0, 0.38, 0.38, 0.04, 0.05, 3.95, 3.17);
-    box(P.coral, 0, 0.38, 0.38, 0.04, 0.55, 3.95, 3.17);
-    box(P.teal, 0, 0.38, 0.38, 0.04, 1.05, 3.95, 3.17);
+  function buildPc(box) {
+    box(P.slate, 0, 1.90, 0.05, 1.10, 0, 0.02, -0.10);
 
-    box(P.wood, 0, 3.2, 0.14, 1.1, 0, 1.02, -0.9);
-    box(P.slate, 0, 0.10, 0.84, 0.10, -1.4, 0.52, -0.9);
-    box(P.slate, 0, 0.10, 0.84, 0.10, 1.4, 0.52, -0.9);
-    box(P.slate, 0, 0.10, 0.84, 0.10, -1.4, 0.52, -0.25);
-    box(P.slate, 0, 0.10, 0.84, 0.10, 1.4, 0.52, -0.25);
-    box(P.slate, 0, 0.55, 0.48, 0.42, -2.55, 0.34, -2.25);
-    box(P.teal, 0, 0.10, 0.10, 0.03, -2.55, 0.34, -2.03);
-    box(P.cream, 0, 1.1, 0.06, 0.35, 0, 1.12, -0.45);
-    box(P.slate, 0, 1.55, 0.95, 0.10, 0, 1.85, -1.75);
-    box(P.glass, 0.55, 1.35, 0.78, 0.03, 0, 1.85, -1.69);
-    box(P.slate, 0, 0.25, 0.18, 0.18, 0, 1.25, -1.75);
-    box(P.slate, 0, 0.55, 0.10, 0.10, 0, 1.30, -1.75);
+    box(P.wood, 0, 1.60, 0.09, 0.72, 0, 0.78, 0);
+    box(P.slate, 0, 0.08, 0.74, 0.08, -0.70, 0.38, 0.28);
+    box(P.slate, 0, 0.08, 0.74, 0.08, 0.70, 0.38, 0.28);
+    box(P.slate, 0, 0.08, 0.74, 0.08, -0.70, 0.38, -0.28);
+    box(P.slate, 0, 0.08, 0.74, 0.08, 0.70, 0.38, -0.28);
 
-    function kiosk(x, screen) {
-      box(P.wood, 0, 0.74, 0.92, 0.54, x, 0.54, 0.36);
-      box(P.slate, 0, 0.12, 0.12, 0.12, x, 1.02, 0.36);
-      box(P.slate, 0, 0.86, 0.60, 0.10, x, 1.39, 0.36);
-      box(screen, 0, 0.70, 0.44, 0.02, x, 1.39, 0.42);
-      box(P.cream, 0, 0.20, 0.06, 0.08, x - 0.24, 1.20, 0.58);
-      box(P.cream, 0, 0.20, 0.06, 0.08, x + 0.24, 1.20, 0.58);
-    }
+    box(P.slate, 0, 0.42, 0.34, 0.36, 0.56, 0.60, -0.02);
+    box(P.teal, 0.30, 0.06, 0.06, 0.03, 0.56, 0.70, 0.16);
 
-    kiosk(-2.45, P.teal);
-    kiosk(2.45, P.mustard);
+    box(P.slate, 0, 0.34, 0.05, 0.16, 0, 0.92, -0.20);
+    box(P.slate, 0, 0.60, 0.05, 0.20, 0, 1.10, -0.20);
+    box(P.slate, 0, 0.98, 0.60, 0.08, 0, 1.32, -0.16);
+    box(P.ink, 0, 0.92, 0.54, 0.02, 0, 1.32, -0.11);
+    box(P.glass, 0.55, 0.80, 0.44, 0.02, 0, 1.32, -0.10);
+    box(P.cream, 0.20, 0.10, 0.03, 0.02, 0, 1.32, -0.09);
 
-    box(P.coral, 0, 0.42, 0.42, 0.42, 2.55, 0.32, 1.9);
-    box(P.cream, 0, 0.46, 0.06, 0.46, 2.55, 0.50, 1.9);
-    box(P.sage, 0, 0.55, 0.16, 0.34, 2.55, 0.62, 1.9);
-    box(P.sage, 0, 0.36, 0.14, 0.44, 2.55, 0.78, 1.9);
-    box(P.coral, 0, 0.42, 0.42, 0.42, -2.55, 0.32, 1.9);
-    box(P.cream, 0, 0.46, 0.06, 0.46, -2.55, 0.50, 1.9);
-    box(P.teal, 0, 0.55, 0.16, 0.34, -2.55, 0.62, 1.9);
-    box(P.teal, 0, 0.36, 0.14, 0.44, -2.55, 0.78, 1.9);
+    box(P.cream, 0, 0.72, 0.04, 0.24, 0, 0.84, 0.10);
+    box(P.slate, 0, 0.08, 0.02, 0.05, -0.26, 0.86, 0.10);
+    box(P.cream, 0, 0.09, 0.06, 0.11, 0.38, 0.85, 0.10);
+
+    box(P.coral, 0, 0.44, 0.44, 0.42, 0, 0.34, -0.78);
+    box(P.coral, 0, 0.44, 0.07, 0.42, 0, 0.66, -0.93);
+    box(P.slate, 0, 0.10, 0.36, 0.36, 0, 0.12, -0.78);
+
+    box(P.slate, 0, 0.06, 0.05, 0.05, 0, 1.86, -0.16);
+    box(P.mustard, 0, 0.86, 0.24, 0.05, 0, 1.99, -0.16);
   }
 
-  function watchCenter(scene, center) {
-    var armed = true;
+  function watchPc(scene, pc) {
+    var inRange = false;
     var marker = document.createElement("div");
     marker.id = "p101-center-marker";
     marker.hidden = true;
-    marker.innerHTML = '<span>PYTHON CENTER</span><small>walk in to use the PC</small>';
+    marker.innerHTML = '<span>PYTHON PC</span><small>press E to use</small>' +
+      '<button type="button" data-use>Use PC</button>';
     document.body.appendChild(marker);
+
+    function battleOpen() {
+      var battle = window.__python101 && window.__python101.battle;
+      return Boolean(battle && battle.isOpen());
+    }
+
+    function canOpen() {
+      var ui = window.__python101CenterUI;
+      return Boolean(ui && inRange && !ui.isOpen() && !battleOpen());
+    }
+
+    function use() {
+      if (!canOpen()) return;
+      window.__python101CenterUI.open();
+    }
+
+    marker.querySelector("[data-use]").addEventListener("click", function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      use();
+    });
+
+    window.addEventListener("keydown", function (event) {
+      if (event.repeat || event.metaKey || event.ctrlKey || event.altKey) return;
+      if (event.key !== "e" && event.key !== "E" && event.key !== "Enter") return;
+      var tag = document.activeElement && document.activeElement.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      if (!canOpen()) return;
+      event.preventDefault();
+      use();
+    });
 
     function tick() {
       var player = scene.characters && scene.characters.mesh && scene.characters.mesh._localObject;
@@ -587,24 +594,18 @@
         window.requestAnimationFrame(tick);
         return;
       }
-      var distance = player.position.distanceTo(center.position);
-      if (!armed && distance > 5.2) {
-        armed = true;
-      }
+      var distance = player.position.distanceTo(pc.position);
+      var open = Boolean(ui && ui.isOpen());
+      inRange = distance <= 3.4 && !open && !battleOpen();
       if (ui) {
-        var open = ui.isOpen();
-        if (distance <= 4.5 && armed && !open) {
-          armed = false;
-          ui.open();
-        }
-        ui.setPrompt("", distance < 12 && armed && !ui.isOpen());
+        ui.setPrompt("Press E to use the Python PC.", inRange);
       }
-      var projected = center.position.clone();
-      projected.y += 4.6;
+      var projected = pc.position.clone();
+      projected.y += 2.6;
       projected.project(scene.camera);
       var onScreen = projected.z > -1 && projected.z < 1 &&
         Math.abs(projected.x) < 1.2 && Math.abs(projected.y) < 1.2;
-      marker.hidden = !(onScreen && distance < 24 && !(ui && ui.isOpen()));
+      marker.hidden = !(onScreen && distance < 18 && !open);
       if (!marker.hidden) {
         marker.style.left = (projected.x * 0.5 + 0.5) * window.innerWidth + "px";
         marker.style.top = (-projected.y * 0.5 + 0.5) * window.innerHeight + "px";
@@ -614,7 +615,7 @@
     window.requestAnimationFrame(tick);
   }
 
-  function makeCenter(scene, C) {
+  function makePc(scene, C) {
     var frame = centerFrame(scene, C);
     if (!frame) return null;
     var group = new C.Group();
@@ -623,12 +624,12 @@
     var buckets = {};
     var localState = { surface: 0 };
     var box = painter(buckets, localState, C, new C.Quat(), new C.Vec3(0, 0, 0));
-    buildCenter(box);
+    buildPc(box);
     var surfaces = flush(buckets, C, C.Material, C.Geometry, C.Attr, C.Mesh, group, scene);
     scene.add(group);
-    var center = { position: frame.pos.clone(), radius: 4.5, group: group, surfaces: surfaces };
-    watchCenter(scene, center);
-    return center;
+    var pc = { position: frame.pos.clone(), group: group, surfaces: surfaces };
+    watchPc(scene, pc);
+    return pc;
   }
 
   function build(scene) {
@@ -661,12 +662,13 @@
         right: podRight
       });
     }
-    var center = makeCenter(scene, C);
-    if (center) surfaces += center.surfaces;
+    var pc = makePc(scene, C);
+    if (pc) surfaces += pc.surfaces;
     window.__python101Office = {
       ready: true,
       pods: pods,
-      center: center,
+      pc: pc,
+      center: pc,
       surfaces: surfaces,
       scene: scene
     };
