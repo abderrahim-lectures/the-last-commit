@@ -18,7 +18,7 @@
   var NOTES = {
     learn: 'Shift 00 starts with <code>print("Messenger online")</code>. Press Run, then Check.',
     play: "Change the toy and press Run. Python runs in this browser tab.",
-    guide: "Walk in, open the PC, type one line, check it, then take the next shift."
+    guide: "Find the PC, press E, type one line, check it, then take the next shift."
   };
 
   function buildPrompt() {
@@ -29,8 +29,8 @@
     prompt.id = "p101-center-prompt";
     prompt.hidden = true;
     prompt.innerHTML = [
-      '<span class="p101-center-prompt-kicker">PYTHON CENTER</span>',
-      '<span class="p101-center-prompt-text">Walk inside to use the PC. Shift 00 starts with <code>print()</code>.</span>'
+      '<span class="p101-center-prompt-kicker">PYTHON PC</span>',
+      '<span class="p101-center-prompt-text">Walk up and press E. Shift 00 starts with <code>print()</code>.</span>'
     ].join("");
     document.body.appendChild(prompt);
     return prompt;
@@ -79,13 +79,13 @@
       '  <p class="p101-guide-kicker">ROUTE CARD</p>',
       "  <h2>Your first five minutes</h2>",
       "  <p class=\"p101-guide-lead\">Follow this script at your own pace. The PC keeps your place.</p>",
-      "  <p class=\"p101-guide-classic\"><strong>Classic route:</strong> in the Gen 1-7 games, the PC sits inside the Center. Walk in, use it, then step back out.</p>",
+      "  <p class=\"p101-guide-classic\"><strong>Classic route:</strong> in the Gen 1-7 games, the PC sits inside the Center. This one sits on the office floor. Walk up and press E.</p>",
       '  <div class="p101-route-posts">',
       '    <button type="button" data-go="learn"><span>01</span><strong>Learn PC</strong><small>13 shifts, from print to classes</small></button>',
       '    <button type="button" data-go="play"><span>02</span><strong>Play PC</strong><small>Type Python and run it for fun</small></button>',
       "  </div>",
       '  <ol class="p101-route-steps">',
-      "    <li><span>1</span><div><strong>Walk into the Python Center.</strong><p>The doors are open. Step inside and the PC wakes up.</p></div></li>",
+      "    <li><span>1</span><div><strong>Find the Python PC.</strong><p>Walk to the small desk on the office floor. Press E when the prompt appears.</p></div></li>",
       "    <li><span>2</span><div><strong>Open Shift 00.</strong><p>Read &ldquo;A small planet&rdquo;. It introduces <code>print()</code>, strings, comments, and variables.</p></div></li>",
       '    <li><span>3</span><div><strong>Type one line.</strong><p>In the editor, write <code>print("Messenger online")</code>. Press <b>Run</b> and read the output.</p></div></li>',
       "    <li><span>4</span><div><strong>Press Check.</strong><p>Tests compare your output with the shift. When they pass, Shift 00 is complete.</p></div></li>",
@@ -110,12 +110,12 @@
     overlay.hidden = true;
     overlay.setAttribute("role", "dialog");
     overlay.setAttribute("aria-modal", "true");
-    overlay.setAttribute("aria-label", "Python Center computer");
+    overlay.setAttribute("aria-label", "Python PC computer");
     overlay.innerHTML = [
       '<div class="p101-center-shell">',
       '  <header class="p101-center-bar">',
       '    <div class="p101-center-brand">',
-      "      <span>PYTHON CENTER</span>",
+      "      <span>PYTHON PC</span>",
       "      <small>PC &middot; 3 posts &middot; print() to OOP</small>",
       "    </div>",
       '    <div class="p101-center-actions">',

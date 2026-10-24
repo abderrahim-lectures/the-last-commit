@@ -489,3 +489,22 @@
   letter-spacing: .04em;
   opacity: .75;
 }
+
+#p101-center-marker button {
+  margin-top: 3px;
+  padding: 3px 9px;
+  border: 2px solid #20262c;
+  border-radius: 6px;
+  background: #fbf3df;
+  color: #20262c;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+#p101-center-marker button:hover {
+  background: #ffffff;
+}
