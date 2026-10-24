@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Play PC - Python 101</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%237cc9c2' stroke='%23102a33' stroke-width='4'/%3E%3Ccircle cx='24' cy='26' r='6' fill='%23f4c84b'/%3E%3Ccircle cx='42' cy='40' r='4' fill='%23f4c84b'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --ink: #20262c;
+      --paper: #f4e8cb;
+      --paper-deep: #fffaf0;
+      --teal: #2f7d78;
+      --coral: #d95d44;
+      --mustard: #f0c95e;
+      --line: #d8c7a3;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      --sans: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+    }
+
+    body {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      min-height: 100vh;
+    }
+
+    .play-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 18px;
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .kicker {
+      margin: 0 0 2px;
+      color: var(--mustard);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .18em;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.2;
+    }
+
+    .status {
+      flex: 0 0 auto;
+      padding: 6px 10px;
+      border: 1px solid #64747a;
+      border-radius: 999px;
+      color: #d8e4e2;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .04em;
+    }
+
+    .status[data-kind="ok"] { border-color: #7fc9b0; color: #a9efd6; }
+    .status[data-kind="busy"] { border-color: var(--mustard); color: var(--mustard); }
+    .status[data-kind="bad"] { border-color: #f19a88; color: #ffc1b5; }
+
+    .play-main {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr);
+      gap: 14px;
+      min-height: 0;
+      padding: 14px;
+    }
+
+    .panel {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      min-height: 0;
+      overflow: hidden;
+      border: 2px solid var(--ink);
+      border-radius: 10px;
+      background: var(--paper-deep);
+      box-shadow: 4px 4px 0 rgba(32, 38, 44, .18);
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 11px;
+      border-bottom: 2px solid var(--ink);
+      background: #e8d7b6;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .12em;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100%;
+      min-height: 180px;
+      resize: none;
+      border: 0;
+      outline: none;
+      padding: 13px;
+      background: #fffdf7;
+      color: #193039;
+      font: 13px/1.55 var(--mono);
+      tab-size: 4;
+    }
+
+    textarea:focus { background: #fff; }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 9px 11px;
+      border-top: 2px solid var(--line);
+    }
+
+    button {
+      appearance: none;
+      border: 2px solid var(--ink);
+      border-radius: 7px;
+      background: var(--teal);
+      color: #fff;
+      padding: 7px 11px;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 rgba(32, 38, 44, .30);
+    }
+
+    button:hover { background: #25645f; }
+    button:disabled { opacity: .5; cursor: wait; }
+    button.ghost { background: transparent; color: var(--ink); box-shadow: none; }
+    button.ghost:hover { background: #ead8b6; }
+
+    .note {
+      margin-left: auto;
+      color: #52656b;
+      font-size: 11px;
+    }
+
+    .output-panel {
+      grid-template-rows: auto minmax(0, 1fr);
+    }
+
+    pre {
+      margin: 0;
+      min-height: 180px;
+      overflow: auto;
+      padding: 13px;
+      background: #10262d;
+      color: #d7f4e9;
+      font: 12px/1.55 var(--mono);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .toys {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 7px;
+      padding: 10px 14px;
+      border-top: 2px solid var(--ink);
+      background: var(--paper-deep);
+    }
+
+    .toys span {
+      margin-right: 3px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .1em;
+    }
+
+    .toys button {
+      border-width: 1px;
+      background: transparent;
+      color: var(--ink);
+      box-shadow: none;
+      font-size: 11px;
+      padding: 5px 8px;
+    }
+
+    .toys button:hover { background: var(--mustard); }
+
+    @media (max-width: 720px) {
+      .play-main { grid-template-columns: 1fr; }
+      .note { margin-left: 0; width: 100%; }
+      h1 { font-size: 17px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="play-head">
+    <div>
+      <p class="kicker">PLAY PC</p>
+      <h1>Type Python for fun</h1>
+    </div>
+    <div class="status" id="status" data-kind="busy">Booting Python...</div>
+  </header>
+
+  <main class="play-main">
+    <section class="panel" aria-label="Code editor">
+      <div class="panel-head">
+        <span>YOUR CODE</span>
+        <span>Ctrl + Enter runs</span>
+      </div>
+      <label class="sr-only" for="code" hidden>Python code</label>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
+      <div class="actions">
+        <button id="run" type="button" disabled>Run code</button>
+        <button id="reset" class="ghost" type="button">Reset toy</button>
+        <span class="note">Python runs in this browser tab.</span>
+      </div>
+    </section>
+
+    <section class="panel output-panel" aria-label="Output">
+      <div class="panel-head">
+        <span>OUTPUT</span>
+        <button id="clear" class="ghost" type="button">Clear</button>
+      </div>
+      <pre id="output">Ready when you are.</pre>
+    </section>
+  </main>
+
+  <nav class="toys" aria-label="Code toys">
+    <span>TRY A TOY:</span>
+    <button type="button" data-example="hello">Hello</button>
+    <button type="button" data-example="loop">Loop</button>
+    <button type="button" data-example="list">List</button>
+    <button type="button" data-example="class">Class</button>
+    <button type="button" data-example="pattern">Pattern</button>
+  </nav>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var EXAMPLES = {
+        hello: 'print("Hello, courier!")\nprint("Welcome to the Python Center.")',
+        loop: 'for step in range(1, 6):\n    print("Delivery", step, "is ready")',
+        list: 'packages = ["letter", "parcel", "postcard"]\nfor package in packages:\n    print(package.upper(), "->", len(package), "letters")',
+        class: 'class Package:\n    def __init__(self, name):\n        self.name = name\n\n    def label(self):\n        return f"TO: {self.name}"\n\nprint(Package("Ada").label())',
+        pattern: 'for row in range(1, 7):\n    print("*" * row)'
+      };
+      var STORE_CODE = "python101_play_code";
+      var code = document.getElementById("code");
+      var output = document.getElementById("output");
+      var statusEl = document.getElementById("status");
+      var runButton = document.getElementById("run");
+      var resetButton = document.getElementById("reset");
+      var clearButton = document.getElementById("clear");
+      var worker = null;
+      var ready = false;
+      var running = null;
+      var runSeq = 0;
+      var bootTimer = 0;
+      var runTimer = 0;
+      var activeExample = "hello";
+
+      function setStatus(text, kind) {
+        statusEl.textContent = text;
+        statusEl.dataset.kind = kind || "busy";
+      }
+
+      function setRunEnabled(enabled) {
+        runButton.disabled = !enabled;
+      }
+
+      function loadSavedCode() {
+        try {
+          return localStorage.getItem(STORE_CODE) || EXAMPLES[activeExample];
+        } catch (error) {
+          return EXAMPLES[activeExample];
+        }
+      }
+
+      function saveCode() {
+        try {
+          localStorage.setItem(STORE_CODE, code.value);
+        } catch (error) {}
+      }
+
+      function showExample(name) {
+        if (running) {
+          return;
+        }
+        activeExample = name;
+        code.value = EXAMPLES[name] || EXAMPLES.hello;
+        output.textContent = ready ? "Ready. Press Run code." : "Booting Python...";
+        setStatus(ready ? "Python ready" : "Booting Python...", ready ? "ok" : "busy");
+        saveCode();
+        code.focus();
+      }
+
+      function stopWorker(message) {
+        window.clearTimeout(bootTimer);
+        window.clearTimeout(runTimer);
+        ready = false;
+        running = null;
+        if (worker) {
+          worker.terminate();
+          worker = null;
+        }
+        setRunEnabled(false);
+        setStatus("Python restarting", "busy");
+        output.textContent = message;
+        window.setTimeout(ensureWorker, 350);
+      }
+
+      function handleMessage(event) {
+        var message = event.data || {};
+        if (message.type === "ready") {
+          window.clearTimeout(bootTimer);
+          ready = true;
+          setRunEnabled(!running);
+          setStatus("Python ready", "ok");
+          if (!running) {
+            output.textContent = "Ready. Press Run code.";
+          }
+          return;
+        }
+        if (message.type === "boot-error") {
+          window.clearTimeout(bootTimer);
+          ready = false;
+          running = null;
+          if (worker) {
+            worker.terminate();
+            worker = null;
+          }
+          setRunEnabled(true);
+          setStatus("Python did not load", "bad");
+          output.textContent = "Pyodide could not start. Check the connection and press Run to try again.";
+          return;
+        }
+        if (!running || message.id !== running.id) {
+          return;
+        }
+        if (message.type === "done") {
+          window.clearTimeout(runTimer);
+          running = null;
+          setRunEnabled(true);
+          output.textContent = message.text || '(No output. Try print("hello").)';
+          setStatus("Done", "ok");
+          return;
+        }
+        if (message.type === "error") {
+          window.clearTimeout(runTimer);
+          running = null;
+          setRunEnabled(true);
+          output.textContent = message.text || "Python stopped.";
+          setStatus("Python stopped", "bad");
+        }
+      }
+
+      function ensureWorker() {
+        if (worker) {
+          return worker;
+        }
+        setRunEnabled(false);
+        setStatus("Booting Python...", "busy");
+        worker = new Worker("play-worker.js");
+        worker.onmessage = handleMessage;
+        worker.onerror = function () {
+          stopWorker("The Python worker stopped. Press Run to restart it.");
+        };
+        bootTimer = window.setTimeout(function () {
+          stopWorker("Python took too long to load. Check the connection and press Run to try again.");
+        }, 60000);
+        return worker;
+      }
+
+      function runCode() {
+        if (running) {
+          return;
+        }
+        if (!worker) {
+          ensureWorker();
+          return;
+        }
+        if (!ready) {
+          return;
+        }
+        saveCode();
+        running = { id: ++runSeq };
+        setRunEnabled(false);
+        setStatus("Running...", "busy");
+        output.textContent = "Running...";
+        worker.postMessage({ type: "run", id: running.id, code: code.value });
+        window.clearTimeout(runTimer);
+        runTimer = window.setTimeout(function () {
+          if (running) {
+            stopWorker("Stopped after 10 seconds. Check for an endless loop. Python is restarting.");
+          }
+        }, 10000);
+      }
+
+      code.value = loadSavedCode();
+      output.textContent = "Booting Python...";
+      runButton.addEventListener("click", runCode);
+      resetButton.addEventListener("click", function () {
+        showExample(activeExample);
+      });
+      clearButton.addEventListener("click", function () {
+        output.textContent = "Ready.";
+      });
+      code.addEventListener("input", saveCode);
+      code.addEventListener("keydown", function (event) {
+        if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+          event.preventDefault();
+          runCode();
+        }
+      });
+      document.querySelectorAll("[data-example]").forEach(function (button) {
+        button.addEventListener("click", function () {
+          showExample(button.getAttribute("data-example"));
+        });
+      });
+      ensureWorker();
+    })();
+  </script>
+</body>
+</html>

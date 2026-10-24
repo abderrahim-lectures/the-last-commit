@@ -550,6 +550,18 @@
     box(P.slate, 0, 0.25, 0.18, 0.18, 0, 1.25, -1.75);
     box(P.slate, 0, 0.55, 0.10, 0.10, 0, 1.30, -1.75);
 
+    function kiosk(x, screen) {
+      box(P.wood, 0, 0.74, 0.92, 0.54, x, 0.54, 0.36);
+      box(P.slate, 0, 0.12, 0.12, 0.12, x, 1.02, 0.36);
+      box(P.slate, 0, 0.86, 0.60, 0.10, x, 1.39, 0.36);
+      box(screen, 0, 0.70, 0.44, 0.02, x, 1.39, 0.42);
+      box(P.cream, 0, 0.20, 0.06, 0.08, x - 0.24, 1.20, 0.58);
+      box(P.cream, 0, 0.20, 0.06, 0.08, x + 0.24, 1.20, 0.58);
+    }
+
+    kiosk(-2.45, P.teal);
+    kiosk(2.45, P.mustard);
+
     box(P.coral, 0, 0.42, 0.42, 0.42, 2.55, 0.32, 1.9);
     box(P.cream, 0, 0.46, 0.06, 0.46, 2.55, 0.50, 1.9);
     box(P.sage, 0, 0.55, 0.16, 0.34, 2.55, 0.62, 1.9);
@@ -561,7 +573,7 @@
   }
 
   function watchCenter(scene, center) {
-    var armed = false;
+    var armed = true;
     var marker = document.createElement("div");
     marker.id = "p101-center-marker";
     marker.hidden = true;
