@@ -489,3 +489,36 @@ body.p101-battle-open {
     animation: none;
   }
 }
+
+#p101-lock {
+  position: fixed;
+  left: 50%;
+  top: 84px;
+  z-index: 950;
+  width: min(560px, calc(100vw - 28px));
+  padding: 10px 14px;
+  border: 2px solid #20262c;
+  border-radius: 10px;
+  background: #f0c95e;
+  color: #20262c;
+  box-shadow: 5px 5px 0 rgba(32, 38, 44, .35);
+  transform: translate(-50%, -14px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease, transform .18s ease;
+  font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+#p101-lock.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #p101-lock {
+    transition: none;
+  }
+}

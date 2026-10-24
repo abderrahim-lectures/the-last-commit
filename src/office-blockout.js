@@ -485,6 +485,140 @@
     return { group: group, surfaces: surfaces, localState: localState };
   }
 
+
+  function centerFrame(scene, C) {
+    var player = scene.characters && scene.characters.mesh;
+    var object = player && player._localObject;
+    if (!object || !object.position) return null;
+    var spawn = object.position.clone();
+    var radius = spawn.length();
+    if (radius < 0.001) return null;
+    var up = spawn.clone().normalize();
+    var forward = new C.Vec3(0, 0, 1).applyQuaternion(object.quaternion);
+    forward.addScaledVector(up, -forward.dot(up));
+    if (forward.lengthSq() < 0.0001) {
+      forward.set(1, 0, 0);
+      forward.addScaledVector(up, -forward.dot(up));
+    }
+    forward.normalize();
+    var pos = spawn.clone().addScaledVector(forward, 6.2).normalize().multiplyScalar(radius);
+    var toward = spawn.clone().sub(pos);
+    toward.addScaledVector(up, -toward.dot(up)).normalize();
+    var right = new C.Vec3().crossVectors(up, toward).normalize();
+    var matrix = scene.camera.matrix.clone();
+    var e = matrix.elements;
+    e[0] = right.x; e[1] = right.y; e[2] = right.z; e[3] = 0;
+    e[4] = up.x; e[5] = up.y; e[6] = up.z; e[7] = 0;
+    e[8] = toward.x; e[9] = toward.y; e[10] = toward.z; e[11] = 0;
+    e[12] = 0; e[13] = 0; e[14] = 0; e[15] = 1;
+    var quat = new C.Quat();
+    quat.setFromRotationMatrix(matrix);
+    return { pos: pos, up: up, forward: toward, right: right, quat: quat };
+  }
+
+  function buildCenter(box) {
+    box(P.slate, 0, 7.2, 0.10, 6.2, 0, 0.05, 0);
+    box(P.cream, 0, 7.0, 0.16, 6.0, 0, 0.08, 0);
+    box(P.teal, 0, 7.1, 0.05, 0.10, 0, 0.16, 3.0);
+    box(P.cream, 0, 7.0, 3.2, 0.18, 0, 1.64, -3.05);
+    box(P.teal, 0, 6.8, 0.65, 0.06, 0, 0.46, -2.95);
+    box(P.slate, 0, 7.1, 0.08, 0.22, 0, 3.24, -3.05);
+    box(P.cream, 0, 0.18, 3.2, 5.8, -3.42, 1.64, 0);
+    box(P.cream, 0, 0.18, 3.2, 5.8, 3.42, 1.64, 0);
+    box(P.mustard, 0, 7.2, 0.18, 6.2, 0, 3.30, 0);
+    box(P.cream, 0, 7.0, 0.10, 6.0, 0, 3.38, 0);
+    box(P.coral, 0, 7.2, 0.20, 0.18, 0, 3.28, 3.05);
+    box(P.cream, 0, 7.0, 0.45, 0.18, 0, 2.80, 3.0);
+    box(P.slate, 0, 5.4, 0.90, 0.15, 0, 3.95, 3.05);
+    box(P.cream, 0, 5.1, 0.70, 0.04, 0, 3.95, 3.14);
+    box(P.mustard, 0, 1.8, 0.42, 0.04, -1.5, 3.95, 3.17);
+    box(P.coral, 0, 0.38, 0.38, 0.04, -0.45, 3.95, 3.17);
+    box(P.teal, 0, 0.38, 0.38, 0.04, 0.05, 3.95, 3.17);
+    box(P.coral, 0, 0.38, 0.38, 0.04, 0.55, 3.95, 3.17);
+    box(P.teal, 0, 0.38, 0.38, 0.04, 1.05, 3.95, 3.17);
+
+    box(P.wood, 0, 3.2, 0.14, 1.1, 0, 1.02, -0.9);
+    box(P.slate, 0, 0.10, 0.84, 0.10, -1.4, 0.52, -0.9);
+    box(P.slate, 0, 0.10, 0.84, 0.10, 1.4, 0.52, -0.9);
+    box(P.slate, 0, 0.10, 0.84, 0.10, -1.4, 0.52, -0.25);
+    box(P.slate, 0, 0.10, 0.84, 0.10, 1.4, 0.52, -0.25);
+    box(P.slate, 0, 0.55, 0.48, 0.42, -2.55, 0.34, -2.25);
+    box(P.teal, 0, 0.10, 0.10, 0.03, -2.55, 0.34, -2.03);
+    box(P.cream, 0, 1.1, 0.06, 0.35, 0, 1.12, -0.45);
+    box(P.slate, 0, 1.55, 0.95, 0.10, 0, 1.85, -1.75);
+    box(P.glass, 0.55, 1.35, 0.78, 0.03, 0, 1.85, -1.69);
+    box(P.slate, 0, 0.25, 0.18, 0.18, 0, 1.25, -1.75);
+    box(P.slate, 0, 0.55, 0.10, 0.10, 0, 1.30, -1.75);
+
+    box(P.coral, 0, 0.42, 0.42, 0.42, 2.55, 0.32, 1.9);
+    box(P.cream, 0, 0.46, 0.06, 0.46, 2.55, 0.50, 1.9);
+    box(P.sage, 0, 0.55, 0.16, 0.34, 2.55, 0.62, 1.9);
+    box(P.sage, 0, 0.36, 0.14, 0.44, 2.55, 0.78, 1.9);
+    box(P.coral, 0, 0.42, 0.42, 0.42, -2.55, 0.32, 1.9);
+    box(P.cream, 0, 0.46, 0.06, 0.46, -2.55, 0.50, 1.9);
+    box(P.teal, 0, 0.55, 0.16, 0.34, -2.55, 0.62, 1.9);
+    box(P.teal, 0, 0.36, 0.14, 0.44, -2.55, 0.78, 1.9);
+  }
+
+  function watchCenter(scene, center) {
+    var armed = false;
+    var marker = document.createElement("div");
+    marker.id = "p101-center-marker";
+    marker.hidden = true;
+    marker.innerHTML = '<span>PYTHON CENTER</span><small>walk in to use the PC</small>';
+    document.body.appendChild(marker);
+
+    function tick() {
+      var player = scene.characters && scene.characters.mesh && scene.characters.mesh._localObject;
+      var ui = window.__python101CenterUI;
+      if (!player || !player.position) {
+        window.requestAnimationFrame(tick);
+        return;
+      }
+      var distance = player.position.distanceTo(center.position);
+      if (!armed && distance > 5.2) {
+        armed = true;
+      }
+      if (ui) {
+        var open = ui.isOpen();
+        if (distance <= 4.5 && armed && !open) {
+          armed = false;
+          ui.open();
+        }
+        ui.setPrompt("", distance < 12 && armed && !ui.isOpen());
+      }
+      var projected = center.position.clone();
+      projected.y += 4.6;
+      projected.project(scene.camera);
+      var onScreen = projected.z > -1 && projected.z < 1 &&
+        Math.abs(projected.x) < 1.2 && Math.abs(projected.y) < 1.2;
+      marker.hidden = !(onScreen && distance < 24 && !(ui && ui.isOpen()));
+      if (!marker.hidden) {
+        marker.style.left = (projected.x * 0.5 + 0.5) * window.innerWidth + "px";
+        marker.style.top = (-projected.y * 0.5 + 0.5) * window.innerHeight + "px";
+      }
+      window.requestAnimationFrame(tick);
+    }
+    window.requestAnimationFrame(tick);
+  }
+
+  function makeCenter(scene, C) {
+    var frame = centerFrame(scene, C);
+    if (!frame) return null;
+    var group = new C.Group();
+    group.position.copy(frame.pos);
+    group.quaternion.copy(frame.quat);
+    var buckets = {};
+    var localState = { surface: 0 };
+    var box = painter(buckets, localState, C, new C.Quat(), new C.Vec3(0, 0, 0));
+    buildCenter(box);
+    var surfaces = flush(buckets, C, C.Material, C.Geometry, C.Attr, C.Mesh, group, scene);
+    scene.add(group);
+    var center = { position: frame.pos.clone(), radius: 4.5, group: group, surfaces: surfaces };
+    watchCenter(scene, center);
+    return center;
+  }
+
   function build(scene) {
     if (!scene || state === scene) return;
     state = scene;
@@ -515,9 +649,12 @@
         right: podRight
       });
     }
+    var center = makeCenter(scene, C);
+    if (center) surfaces += center.surfaces;
     window.__python101Office = {
       ready: true,
       pods: pods,
+      center: center,
       surfaces: surfaces,
       scene: scene
     };

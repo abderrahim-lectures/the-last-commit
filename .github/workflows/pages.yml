@@ -28,7 +28,7 @@ jobs:
         run: |
           rm -rf _site
           mkdir -p _site
-          cp -R index.html assets content src _site/
+          cp -R index.html assets content src course _site/
           touch _site/.nojekyll
 
       - name: Configure Pages

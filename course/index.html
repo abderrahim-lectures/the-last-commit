@@ -1,0 +1,1723 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%237cc9c2' stroke='%23102a33' stroke-width='4'/%3E%3Ccircle cx='24' cy='26' r='6' fill='%23f4c84b'/%3E%3Ccircle cx='42' cy='40' r='4' fill='%23f4c84b'/%3E%3C/svg%3E">
+<title>Messenger Lab: Python 101 to OOP</title>
+<meta name="description" content="A story-driven Python course from first print to object-oriented programming, grounded in the Messenger game by abeto.co. Challenges run in the browser with Pyodide.">
+<style>
+  :root{
+    --ink:#102a33;
+    --ink-soft:#274a54;
+    --paper:#f4ecd9;
+    --paper-2:#fffaf0;
+    --sky:#7cc9c2;
+    --sky-2:#bfe7e1;
+    --yellow:#f4c84b;
+    --red:#d8685b;
+    --green:#78a97a;
+    --blue:#65b9df;
+    --orange:#e58b5a;
+    --line:2px solid var(--ink);
+    --shadow:6px 6px 0 var(--ink);
+    --radius:14px;
+    --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+    --display:"Arial Black","Archivo Black",Impact,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    color:var(--ink);
+    font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;
+    font-size:17px;
+    line-height:1.65;
+    background:
+      radial-gradient(circle at 12% 6%, #fff9e9 0, rgba(255,249,233,0) 38%),
+      radial-gradient(circle at 88% 82%, #c9e9e4 0, rgba(201,233,228,0) 42%),
+      var(--paper);
+  }
+  a{color:#0a5b6b}
+  a:hover{color:#083f4a}
+  .skip-link{position:fixed;left:-999px;top:0;z-index:40;background:var(--paper);color:var(--ink);padding:.6rem .9rem;border-radius:0 0 .5rem 0;box-shadow:0 2px 8px rgba(16,42,51,.2)}
+  .skip-link:focus{left:0;outline:3px solid var(--coral);outline-offset:2px}
+  main:focus-visible{outline:2px solid var(--coral);outline-offset:4px}
+  main{scroll-margin-top:76px}
+  code{font-family:var(--mono);font-size:.92em;background:#e8f2ee;border:1px solid #c7ddd5;border-radius:4px;padding:1px 5px}
+  pre code{background:none;border:0;padding:0;font-size:inherit}
+  .topbar{
+    position:sticky;top:0;z-index:30;
+    display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+    padding:10px 20px;
+    background:var(--ink);color:var(--paper-2);
+    border-bottom:3px solid #071b21;
+  }
+  .brand{font-family:var(--display);font-size:18px;letter-spacing:.08em;line-height:1}
+  .brand span{color:var(--yellow)}
+  .top-progress{display:flex;align-items:center;gap:10px;font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+  .bar{width:150px;height:10px;border:2px solid var(--paper-2);border-radius:99px;overflow:hidden;background:#071b21}
+  .bar > i{display:block;height:100%;width:0;background:var(--yellow);transition:width .25s ease}
+  .spacer{flex:1}
+  .status{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+    background:#173b45;border:2px solid #2c5a66;border-radius:99px;padding:5px 10px;
+  }
+  .dot{width:9px;height:9px;border-radius:50%;background:#8ba1a6;box-shadow:0 0 0 2px #0b2229}
+  .status[data-kind="ready"] .dot{background:#8fe0a8}
+  .status[data-kind="busy"] .dot{background:var(--yellow);animation:pulse 1s infinite}
+  .status[data-kind="bad"] .dot{background:var(--red)}
+  @keyframes pulse{50%{opacity:.35}}
+  .shell{
+    display:grid;grid-template-columns:260px minmax(0,1fr);gap:26px;
+    width:min(1280px,100%);margin:0 auto;padding:26px 22px 70px;
+  }
+  .rail{position:sticky;top:78px;align-self:start;min-width:0;max-height:calc(100vh - 100px);overflow:auto;padding-right:4px}
+  .rail h2{font-family:var(--display);font-size:12px;letter-spacing:.16em;margin:0 0 12px;text-transform:uppercase}
+  .rail-list{display:flex;flex-direction:column;gap:7px;margin:0;padding:0;list-style:none}
+  .rail button{
+    width:100%;display:grid;grid-template-columns:34px 1fr;gap:8px;align-items:center;
+    text-align:left;font:inherit;font-size:14px;line-height:1.25;color:var(--ink);
+    background:var(--paper-2);border:var(--line);border-radius:8px;padding:8px 9px;cursor:pointer;
+    box-shadow:3px 3px 0 rgba(16,42,51,.18);
+  }
+  .rail button:hover{background:#fff;transform:translate(-1px,-1px);box-shadow:4px 4px 0 rgba(16,42,51,.22)}
+  .rail button[aria-current="step"]{background:var(--yellow);box-shadow:3px 3px 0 var(--ink)}
+  .rail button:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:3px 3px 0 rgba(16,42,51,.18)}
+  .rail button .n{font-family:var(--mono);font-size:12px;font-weight:700;opacity:.7}
+  .rail button .t{font-weight:700}
+  .rail button .ok{grid-column:2;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#246b3c}
+  .rail-foot{margin-top:16px;font-size:12px;line-height:1.5;color:var(--ink-soft)}
+  main{min-width:0}
+  .chapter-head{margin:0 0 18px}
+  .kicker{display:inline-block;font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;background:var(--sky);border:2px solid var(--ink);border-radius:99px;padding:3px 10px}
+  .chapter-title{display:flex;gap:14px;align-items:flex-start;margin:12px 0 6px}
+  .chapter-num{font-family:var(--display);font-size:54px;line-height:.9;color:transparent;-webkit-text-stroke:2px var(--ink);flex:0 0 auto}
+  .chapter-title h1{font-family:var(--display);font-size:clamp(28px,4vw,44px);line-height:1.02;margin:0;letter-spacing:-.01em}
+  .chapter-tag{margin:0;font-size:14px;letter-spacing:.04em;color:var(--ink-soft)}
+  .hero{
+    display:grid;grid-template-columns:minmax(0,1.15fr) minmax(260px,.85fr);gap:20px;align-items:start;
+    margin:18px 0 24px;
+  }
+  .hero-copy{
+    background:var(--sky);border:var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
+    padding:26px;position:relative;overflow:hidden;
+  }
+  .hero-copy:after{
+    content:"";position:absolute;right:-40px;bottom:-60px;width:180px;height:180px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#fff6bf,var(--yellow) 55%,#d9a52b 100%);
+    border:3px solid var(--ink);opacity:.9;
+  }
+  .hero-copy h2{font-family:var(--display);font-size:clamp(38px,6vw,66px);line-height:.9;margin:0 0 8px;letter-spacing:-.02em}
+  .hero-copy p{max-width:46ch;margin:0 0 10px;position:relative;z-index:1;font-size:17px}
+  .hero-copy .small{font-size:13px;line-height:1.45}
+  .hero-shot{margin:0;display:flex;flex-direction:column;min-width:0;border:var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);background:#0b2229}
+  .hero-shot img{display:block;width:100%;height:auto;aspect-ratio:780/493;object-fit:cover;image-rendering:auto}
+  .hero-shot figcaption{font-size:11px;line-height:1.4;padding:7px 9px;background:var(--paper-2);border-top:2px solid var(--ink)}
+  .panel{
+    background:var(--paper-2);border:var(--line);border-radius:var(--radius);
+    box-shadow:4px 4px 0 rgba(16,42,51,.22);padding:20px 22px;margin:0 0 18px;
+  }
+  .panel h2,.panel h3{font-family:var(--display);letter-spacing:.01em;line-height:1.1;margin:0 0 10px}
+  .panel h2{font-size:22px}
+  .panel h3{font-size:17px}
+  .scene p{margin:0 0 11px}
+  .scene p:last-child{margin-bottom:0}
+  .scene .who{font-weight:700;color:#0a5b6b}
+  .field{border-left:8px solid var(--sky);background:#e9f7f3}
+  .field .label,.concept .label,.task .label{display:block;font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-bottom:6px}
+  .field code{background:#d8efea;border-color:#b9dcd4}
+  .concept{background:#fff2c9;border-left:8px solid var(--yellow)}
+  .concept ul{margin:8px 0 0;padding-left:22px}
+  .concept li{margin:0 0 7px}
+  .concept li:last-child{margin-bottom:0}
+  .task{background:#ffe7df;border-left:8px solid var(--red)}
+  .task p{margin:0 0 8px}
+  .editor-wrap{border:var(--line);border-radius:12px;overflow:hidden;background:#0c2028;box-shadow:4px 4px 0 rgba(16,42,51,.28);margin:14px 0 0}
+  .editor-bar{display:flex;align-items:center;gap:10px;padding:8px 12px;background:#173b45;color:#cfe9e3;border-bottom:2px solid #071b21;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+  .editor-bar .file{font-family:var(--mono);letter-spacing:0;text-transform:none;color:#fff}
+  .editor-bar .spacer{flex:1}
+  .mini{font:inherit;font-size:11px;letter-spacing:.06em;text-transform:uppercase;background:transparent;color:#cfe9e3;border:1px solid #4f7a86;border-radius:6px;padding:3px 8px;cursor:pointer}
+  .mini:hover{background:#24525f;color:#fff}
+  textarea.editor{
+    display:block;width:100%;min-height:230px;resize:vertical;
+    border:0;outline:0;background:#0c2028;color:#e9f8f4;
+    font-family:var(--mono);font-size:14px;line-height:1.6;tab-size:4;
+    padding:15px 16px;caret-color:var(--yellow);
+  }
+  textarea.editor:focus{box-shadow:inset 0 0 0 3px var(--yellow)}
+  .actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0 0}
+  .btn{
+    appearance:none;font:inherit;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    border:var(--line);border-radius:9px;padding:9px 16px;cursor:pointer;
+    background:var(--paper-2);color:var(--ink);box-shadow:3px 3px 0 var(--ink);
+  }
+  .btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+  .btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:3px 3px 0 var(--ink)}
+  .btn-primary{background:var(--yellow)}
+  .btn-check{background:var(--sky)}
+  .run-note{font-size:13px;color:var(--ink-soft)}
+  .output{
+    margin:12px 0 0;min-height:52px;max-height:360px;overflow:auto;
+    background:#08171d;color:#bdeade;border:2px solid #071b21;border-radius:10px;
+    padding:12px 14px;font-family:var(--mono);font-size:13px;line-height:1.5;white-space:pre-wrap;word-break:break-word;
+  }
+  .output.err{color:#ffb4a8}
+  .output .ok{color:#9df0b4}
+  details{margin:12px 0 0;border:2px solid #c7ddd5;border-radius:10px;background:#f4fbf8;padding:8px 12px}
+  details summary{cursor:pointer;font-weight:700;font-size:14px;letter-spacing:.03em}
+  details[open] summary{margin-bottom:8px}
+  .solution-pre{
+    background:#0c2028;color:#e9f8f4;border-radius:8px;padding:12px 14px;overflow:auto;
+    font-family:var(--mono);font-size:13px;line-height:1.55;white-space:pre;
+  }
+  .chapter-nav{display:flex;justify-content:space-between;gap:12px;margin:24px 0 0}
+  .cast{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin:12px 0 0}
+  .cast div{border:2px solid #c7ddd5;border-radius:8px;padding:8px 10px;background:#f7fcfa;font-size:14px}
+  .cast b{display:block;font-size:13px;letter-spacing:.02em}
+  .cast span{color:var(--ink-soft)}
+  .footer{font-size:13px;line-height:1.55;color:var(--ink-soft);border-top:2px dashed #b9d2cb;margin-top:30px;padding-top:16px}
+  .footer p{margin:0 0 8px}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  @media (max-width:900px){
+    .shell{grid-template-columns:minmax(0,1fr);padding:18px 14px 60px}
+    .rail{position:static;max-height:none;overflow:visible;width:100%}
+    .rail-list{flex-direction:row;max-width:100%;overflow:auto;padding-bottom:6px}
+    .rail button{min-width:190px}
+    .rail-foot{display:none}
+    .hero{grid-template-columns:minmax(0,1fr)}
+    .chapter-num{font-size:42px}
+  }
+  @media (max-width:600px){
+    .topbar{gap:10px;padding:8px 14px}
+    main{scroll-margin-top:110px}
+    .brand{font-size:16px}
+    .top-progress{order:3;width:100%;justify-content:space-between}
+    .bar{flex:1;width:auto;max-width:220px}
+    .status{order:2;font-size:11px}
+    .spacer{display:none}
+    .hero-copy:after{width:110px;height:110px;right:-28px;bottom:-42px;opacity:.55}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *{animation:none!important;transition:none!important}
+  }
+  @media print{
+    .topbar,.rail,.actions,.editor-wrap,.chapter-nav{display:none}
+    body{background:#fff}
+    .panel,.hero-copy,.hero-shot{box-shadow:none}
+    .shell{display:block;padding:0}
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to the shift</a>
+<header class="topbar">
+  <div class="brand">MESSENGER <span>LAB</span></div>
+  <div class="top-progress" aria-label="Course progress">
+    <span id="progress-text">0 / 13 shifts</span>
+    <span class="bar" aria-hidden="true"><i id="progress-bar"></i></span>
+  </div>
+  <span class="spacer"></span>
+  <span class="status" id="py-status" data-kind="idle" role="status" aria-live="polite">
+    <span class="dot" aria-hidden="true"></span>
+    <span id="py-status-text">Python asleep</span>
+  </span>
+</header>
+
+<div class="shell">
+  <aside class="rail" aria-label="Course shifts">
+    <h2>Shifts</h2>
+    <ol class="rail-list" id="rail-list"></ol>
+    <div class="rail-foot">
+      <p><strong>How it works.</strong> Read the scene, study the field note, then finish the code. Press <strong>Check</strong> to run the hidden tests.</p>
+      <p>Progress and drafts stay in this browser.</p>
+    </div>
+  </aside>
+
+  <main id="main" tabindex="-1">
+    <div id="chapter-host"></div>
+  </main>
+</div>
+
+<script type="text/plain" id="py-worker">
+let pyodide = null;
+let currentId = 0;
+let currentOut = "";
+
+function post(msg){
+  self.postMessage(msg);
+}
+
+async function boot(){
+  importScripts("https://cdn.jsdelivr.net/pyodide/v0.29.0/full/pyodide.js");
+  const indexURL = "https://cdn.jsdelivr.net/pyodide/v0.29.0/full/";
+  pyodide = await loadPyodide({ indexURL: indexURL });
+  pyodide.setStdout({ batched: function(text){
+    if (!text) return;
+    const chunk = text.endsWith("\n") ? text : text + "\n";
+    currentOut += chunk;
+    post({ type: "out", id: currentId, text: chunk });
+  }});
+  pyodide.setStderr({ batched: function(text){
+    if (!text) return;
+    post({ type: "out", id: currentId, text: text.endsWith("\n") ? text : text + "\n" });
+  }});
+  post({ type: "ready", version: pyodide.version || "Pyodide" });
+}
+
+const ready = boot().catch(function(err){
+  post({ type: "boot-error", message: String(err && err.message ? err.message : err) });
+});
+
+self.onmessage = async function(event){
+  const data = event.data;
+  if (!data || data.type !== "run") return;
+  try {
+    await ready;
+  } catch (err) {
+    post({ type: "error", id: data.id, message: "Python failed to load." });
+    return;
+  }
+  if (!pyodide) {
+    post({ type: "error", id: data.id, message: "Python is not ready." });
+    return;
+  }
+  currentId = data.id;
+  currentOut = "";
+  let ns = null;
+  try {
+    ns = pyodide.runPython("{}");
+    await pyodide.runPythonAsync(data.code, { globals: ns });
+    if (data.tests) {
+      ns.set("__stdout__", currentOut);
+      await pyodide.runPythonAsync(data.tests, { globals: ns });
+    }
+    post({ type: "done", id: data.id, hasTests: !!data.tests });
+  } catch (err) {
+    post({ type: "error", id: data.id, message: String(err && err.message ? err.message : err) });
+  } finally {
+    if (ns) {
+      try { ns.destroy(); } catch (_) {}
+    }
+  }
+};
+</script>
+
+<script type="text/plain" id="starter-00">
+# Shift 00: wake the terminal.
+print("Messenger online")
+
+planet = "small"
+</script>
+<script type="text/plain" id="tests-00">
+assert "Messenger online" in __stdout__
+assert planet == "small"
+</script>
+<script type="text/plain" id="solution-00">
+print("Messenger online")
+planet = "small"
+</script>
+
+<script type="text/plain" id="starter-01">
+# Fill in the four values.
+courier_name = "You"
+deliveries = 0
+total_steps = 0
+rush_order = False
+
+print(courier_name, deliveries, total_steps, rush_order)
+</script>
+<script type="text/plain" id="tests-01">
+assert courier_name == "You"
+assert deliveries == 5
+assert isinstance(deliveries, int)
+assert total_steps == 13
+assert isinstance(total_steps, int)
+assert rush_order is True
+</script>
+<script type="text/plain" id="solution-01">
+courier_name = "You"
+deliveries = 5
+total_steps = 13
+rush_order = True
+
+print(courier_name, deliveries, total_steps, rush_order)
+</script>
+
+<script type="text/plain" id="starter-02">
+queue = [
+    "employee",
+    "caveman",
+    "scientists",
+    "temple",
+    "musician",
+]
+
+# Read the queue.
+first = queue[0]
+last = queue[-1]
+count = len(queue)
+has_temple = "temple" in queue
+
+# Add a bonus job, then remove it again.
+queue.append("bonus")
+queue.pop()
+
+print(first, last, count, has_temple)
+</script>
+<script type="text/plain" id="tests-02">
+assert queue == ["employee", "caveman", "scientists", "temple", "musician"]
+assert first == "employee"
+assert last == "musician"
+assert count == 5
+assert has_temple is True
+</script>
+<script type="text/plain" id="solution-02">
+queue = ["employee", "caveman", "scientists", "temple", "musician"]
+first = queue[0]
+last = queue[-1]
+count = len(queue)
+has_temple = "temple" in queue
+queue.append("bonus")
+queue.pop()
+</script>
+
+<script type="text/plain" id="starter-03">
+def route(zone, fragile):
+    # Priority zones first, then fragile packages, then standard.
+    if zone == "Mountain Temple" or zone == "Red Cliff House":
+        return "priority"
+    if fragile:
+        return "crate"
+    return "standard"
+
+print(route("Mountain Temple", False))
+print(route("Scully's Beach", True))
+print(route("Main Square", False))
+</script>
+<script type="text/plain" id="tests-03">
+assert route("Mountain Temple", False) == "priority"
+assert route("Red Cliff House", True) == "priority"
+assert route("Scully's Beach", True) == "crate"
+assert route("Main Square", False) == "standard"
+</script>
+<script type="text/plain" id="solution-03">
+def route(zone, fragile):
+    if zone == "Mountain Temple" or zone == "Red Cliff House":
+        return "priority"
+    if fragile:
+        return "crate"
+    return "standard"
+</script>
+
+<script type="text/plain" id="starter-04">
+steps = [3, 3, 3, 2, 2]
+
+total = 0
+for n in steps:
+    total += n
+
+labels = []
+for i, n in enumerate(steps, start=1):
+    labels.append(f"Quest {i}: {n} steps")
+
+print(total)
+for label in labels:
+    print(label)
+</script>
+<script type="text/plain" id="tests-04">
+assert total == 13
+assert labels == [
+    "Quest 1: 3 steps",
+    "Quest 2: 3 steps",
+    "Quest 3: 3 steps",
+    "Quest 4: 2 steps",
+    "Quest 5: 2 steps",
+]
+</script>
+<script type="text/plain" id="solution-04">
+steps = [3, 3, 3, 2, 2]
+total = 0
+for n in steps:
+    total += n
+labels = []
+for i, n in enumerate(steps, start=1):
+    labels.append(f"Quest {i}: {n} steps")
+</script>
+
+<script type="text/plain" id="starter-05">
+def make_label(npc, zone):
+    # Return TO: NAME / ZONE, in capitals.
+    pass
+
+print(make_label("Dave the Musician", "Smelly Falls"))
+</script>
+<script type="text/plain" id="tests-05">
+assert make_label("Dave the Musician", "Smelly Falls") == "TO: DAVE THE MUSICIAN / SMELLY FALLS"
+assert make_label("Old Woman", "Mountain Temple") == "TO: OLD WOMAN / MOUNTAIN TEMPLE"
+assert make_label("Doctor Frebi", "Capital Corp.") == "TO: DOCTOR FREBI / CAPITAL CORP."
+</script>
+<script type="text/plain" id="solution-05">
+def make_label(npc, zone):
+    return f"TO: {npc.upper()} / {zone.upper()}"
+</script>
+
+<script type="text/plain" id="starter-06">
+zones = {
+    "square":   ("Main Square",       (25.1548, 11.1266, 2.25704),   8.75),
+    "factory":  ("Capital Corp.",     (-7.82486, 4.19171, -29.304),  18.45),
+    "falls":    ("Smelly Falls",      (8.09011, -13.7658, -12.4145), 10.0),
+    "redhouse": ("Red Cliff House",   (-14.4395, -6.11889, 27.0498), 9.0),
+    "forest":   ("The Forest",        (-8.84153, -19.1808, 2.54687), 13.0),
+    "graveyard":("Lucero Graveyard",  (27.7006, -14.1946, 13.4392),  8.0),
+    "cave":     ("Man's Cave",        (-21.7063, -6.80204, 6.28998), 5.0),
+    "temple":   ("Mountain Temple",   (-10.1549, 34.7748, -3.82302), 8.0),
+    "beach":    ("Scully's Beach",    (-13.1445, 15.572, -1.75282),  8.0),
+}
+
+temple_name = zones["temple"][0]
+temple_coords = zones["temple"][1]
+zone_count = len(zones)
+
+big_zones = []
+for key in zones:
+    if zones[key][2] >= 9:
+        big_zones.append(key)
+
+print(temple_name, temple_coords, zone_count, big_zones)
+</script>
+<script type="text/plain" id="tests-06">
+assert temple_name == "Mountain Temple"
+assert temple_coords == (-10.1549, 34.7748, -3.82302)
+assert zone_count == 9
+assert sorted(big_zones) == ["factory", "falls", "forest", "redhouse"]
+</script>
+<script type="text/plain" id="solution-06">
+zones = {
+    "square":   ("Main Square",       (25.1548, 11.1266, 2.25704),   8.75),
+    "factory":  ("Capital Corp.",     (-7.82486, 4.19171, -29.304),  18.45),
+    "falls":    ("Smelly Falls",      (8.09011, -13.7658, -12.4145), 10.0),
+    "redhouse": ("Red Cliff House",   (-14.4395, -6.11889, 27.0498), 9.0),
+    "forest":   ("The Forest",        (-8.84153, -19.1808, 2.54687), 13.0),
+    "graveyard":("Lucero Graveyard",  (27.7006, -14.1946, 13.4392),  8.0),
+    "cave":     ("Man's Cave",        (-21.7063, -6.80204, 6.28998), 5.0),
+    "temple":   ("Mountain Temple",   (-10.1549, 34.7748, -3.82302), 8.0),
+    "beach":    ("Scully's Beach",    (-13.1445, 15.572, -1.75282),  8.0),
+}
+temple_name = zones["temple"][0]
+temple_coords = zones["temple"][1]
+zone_count = len(zones)
+big_zones = []
+for key in zones:
+    if zones[key][2] >= 9:
+        big_zones.append(key)
+</script>
+
+<script type="text/plain" id="starter-07">
+def quest_text(item, npc, zone):
+    # TAKE THE ITEM TO NPC AT ZONE, in capitals.
+    pass
+
+def slug(zone):
+    # "Scully's Beach" becomes "scullys-beach".
+    pass
+
+print(quest_text("mystery letter", "Dave", "Smelly Falls"))
+print(slug("Scully's Beach"))
+</script>
+<script type="text/plain" id="tests-07">
+assert quest_text("mystery letter", "Dave", "Smelly Falls") == "TAKE THE MYSTERY LETTER TO DAVE AT SMELLY FALLS"
+assert quest_text("offering", "Mountain Guy", "Mountain Temple") == "TAKE THE OFFERING TO MOUNTAIN GUY AT MOUNTAIN TEMPLE"
+assert slug("Scully's Beach") == "scullys-beach"
+assert slug("Mountain Temple") == "mountain-temple"
+</script>
+<script type="text/plain" id="solution-07">
+def quest_text(item, npc, zone):
+    return f"TAKE THE {item.upper()} TO {npc.upper()} AT {zone.upper()}"
+
+def slug(zone):
+    return zone.lower().replace(" ", "-").replace("'", "")
+</script>
+
+<script type="text/plain" id="starter-08">
+def check_package(package):
+    # A package needs a recipient and an item.
+    # Raise ValueError with "missing recipient" or "missing item".
+    if "to" not in package or not package["to"]:
+        raise ValueError("missing recipient")
+    if "item" not in package or not package["item"]:
+        raise ValueError("missing item")
+    return "ok"
+
+print(check_package({"item": "letter", "to": "Dave"}))
+</script>
+<script type="text/plain" id="tests-08">
+assert check_package({"item": "letter", "to": "Dave"}) == "ok"
+try:
+    check_package({"item": "letter"})
+except ValueError as err:
+    assert str(err) == "missing recipient"
+else:
+    raise AssertionError("expected ValueError for a missing recipient")
+try:
+    check_package({"item": "", "to": "Dave"})
+except ValueError as err:
+    assert str(err) == "missing item"
+else:
+    raise AssertionError("expected ValueError for a missing item")
+assert check_package({"item": "offering", "to": "Mountain Guy", "zone": "Mountain Temple"}) == "ok"
+</script>
+<script type="text/plain" id="solution-08">
+def check_package(package):
+    if "to" not in package or not package["to"]:
+        raise ValueError("missing recipient")
+    if "item" not in package or not package["item"]:
+        raise ValueError("missing item")
+    return "ok"
+</script>
+
+<script type="text/plain" id="starter-09">
+class Package:
+    def __init__(self, item, recipient, zone):
+        # Store the three values on self.
+        pass
+
+    def label(self):
+        # TO: RECIPIENT / ZONE, in capitals.
+        pass
+
+print(Package("mystery letter", "Dave", "Smelly Falls").label())
+</script>
+<script type="text/plain" id="tests-09">
+p = Package("mystery letter", "Dave", "Smelly Falls")
+assert p.item == "mystery letter"
+assert p.recipient == "Dave"
+assert p.zone == "Smelly Falls"
+assert p.label() == "TO: DAVE / SMELLY FALLS"
+q = Package("offering", "Mountain Guy", "Mountain Temple")
+assert q.label() == "TO: MOUNTAIN GUY / MOUNTAIN TEMPLE"
+assert p is not q
+</script>
+<script type="text/plain" id="solution-09">
+class Package:
+    def __init__(self, item, recipient, zone):
+        self.item = item
+        self.recipient = recipient
+        self.zone = zone
+
+    def label(self):
+        return f"TO: {self.recipient.upper()} / {self.zone.upper()}"
+</script>
+
+<script type="text/plain" id="starter-10">
+# Package from shift 09.
+class Package:
+    def __init__(self, item, recipient, zone):
+        self.item = item
+        self.recipient = recipient
+        self.zone = zone
+
+    def label(self):
+        return f"TO: {self.recipient.upper()} / {self.zone.upper()}"
+
+class Courier:
+    def __init__(self, name):
+        self.name = name
+        self.carrying = None
+        self.delivered = []
+
+    def pick_up(self, package):
+        # Refuse a second package with ValueError("hands full").
+        pass
+
+    def deliver(self):
+        # Move the package to delivered and clear the hands.
+        # Return True on success, False when empty.
+        pass
+
+c = Courier("You")
+print(c.name, c.carrying, c.delivered)
+</script>
+<script type="text/plain" id="tests-10">
+p1 = Package("letter", "Dave", "Smelly Falls")
+p2 = Package("offering", "Mountain Guy", "Mountain Temple")
+c = Courier("You")
+assert c.name == "You"
+assert c.carrying is None
+assert c.delivered == []
+assert c.pick_up(p1) is True
+assert c.carrying is p1
+try:
+    c.pick_up(p2)
+except ValueError as err:
+    assert str(err) == "hands full"
+else:
+    raise AssertionError("expected ValueError when the hands are full")
+assert c.deliver() is True
+assert c.carrying is None
+assert c.delivered == [p1]
+assert c.deliver() is False
+</script>
+<script type="text/plain" id="solution-10">
+class Package:
+    def __init__(self, item, recipient, zone):
+        self.item = item
+        self.recipient = recipient
+        self.zone = zone
+
+    def label(self):
+        return f"TO: {self.recipient.upper()} / {self.zone.upper()}"
+
+class Courier:
+    def __init__(self, name):
+        self.name = name
+        self.carrying = None
+        self.delivered = []
+
+    def pick_up(self, package):
+        if self.carrying is not None:
+            raise ValueError("hands full")
+        self.carrying = package
+        return True
+
+    def deliver(self):
+        if self.carrying is None:
+            return False
+        self.delivered.append(self.carrying)
+        self.carrying = None
+        return True
+</script>
+
+<script type="text/plain" id="starter-11">
+# Package from shift 09.
+class Package:
+    def __init__(self, item, recipient, zone):
+        self.item = item
+        self.recipient = recipient
+        self.zone = zone
+
+    def label(self):
+        return f"TO: {self.recipient.upper()} / {self.zone.upper()}"
+
+class UrgentPackage(Package):
+    def __init__(self, item, recipient, zone, hours):
+        # Call the parent constructor, then store hours.
+        pass
+
+    def label(self):
+        # Start with "URGENT / ".
+        pass
+
+class FragilePackage(Package):
+    def label(self):
+        # Add " / FRAGILE" to the normal label.
+        pass
+
+    def handle_with_care(self):
+        return True
+
+u = UrgentPackage("gravity data", "Doctor Frebi", "Capital Corp.", 2)
+f = FragilePackage("offering", "Mountain Guy", "Mountain Temple")
+print(u.label())
+print(f.label())
+</script>
+<script type="text/plain" id="tests-11">
+u = UrgentPackage("gravity data", "Doctor Frebi", "Capital Corp.", 2)
+f = FragilePackage("offering", "Mountain Guy", "Mountain Temple")
+assert isinstance(u, Package)
+assert isinstance(f, Package)
+assert u.hours == 2
+assert u.item == "gravity data"
+assert u.recipient == "Doctor Frebi"
+assert u.label() == "URGENT / TO: DOCTOR FREBI / CAPITAL CORP."
+assert f.label() == "TO: MOUNTAIN GUY / MOUNTAIN TEMPLE / FRAGILE"
+assert f.handle_with_care() is True
+assert Package("letter", "Dave", "Smelly Falls").label() == "TO: DAVE / SMELLY FALLS"
+</script>
+<script type="text/plain" id="solution-11">
+class Package:
+    def __init__(self, item, recipient, zone):
+        self.item = item
+        self.recipient = recipient
+        self.zone = zone
+
+    def label(self):
+        return f"TO: {self.recipient.upper()} / {self.zone.upper()}"
+
+class UrgentPackage(Package):
+    def __init__(self, item, recipient, zone, hours):
+        super().__init__(item, recipient, zone)
+        self.hours = hours
+
+    def label(self):
+        return "URGENT / " + super().label()
+
+class FragilePackage(Package):
+    def label(self):
+        return super().label() + " / FRAGILE"
+
+    def handle_with_care(self):
+        return True
+</script>
+
+<script type="text/plain" id="starter-12">
+class Step:
+    def __init__(self, npc, item):
+        self.npc = npc
+        self.item = item
+
+class Quest:
+    def __init__(self, name, steps):
+        self.name = name
+        self.steps = steps
+
+    def summary(self):
+        return f"{self.name} ({len(self.steps)} steps)"
+
+class Office:
+    def __init__(self):
+        self.quests = []
+
+    def add_quest(self, quest):
+        # Append the quest to self.quests.
+        pass
+
+    def total_steps(self):
+        # Add the number of steps in every quest.
+        pass
+
+    def report(self):
+        # Return a dict: quest name -> number of steps.
+        pass
+
+office = Office()
+office.add_quest(Quest("Falling off the corporate ladder", [
+    Step("office worker", "letter"),
+    Step("boss", "note"),
+    Step("office worker", "note"),
+]))
+office.add_quest(Quest("A man who's hiding from something", [
+    Step("cave man", "postcard"),
+    Step("flower lady", "clean clothes"),
+    Step("cave man", "clean clothes"),
+]))
+office.add_quest(Quest("Scientists and mixed-up deliveries", [
+    Step("factory worker", "gravity data"),
+    Step("Doctor Frieb", "gravity data"),
+    Step("Doctor Frebi", "gravity data"),
+]))
+office.add_quest(Quest("An offering to the mountain temple", [
+    Step("old woman", "offering"),
+    Step("mountain guy", "offering"),
+]))
+office.add_quest(Quest("A note lost at sea", [
+    Step("Captain Steve", "wet letter"),
+    Step("Dave the Musician", "wet letter"),
+]))
+
+print(office.total_steps())
+print(office.report())
+</script>
+<script type="text/plain" id="tests-12">
+assert len(office.quests) == 5
+assert office.total_steps() == 13
+assert office.report() == {
+    "Falling off the corporate ladder": 3,
+    "A man who's hiding from something": 3,
+    "Scientists and mixed-up deliveries": 3,
+    "An offering to the mountain temple": 2,
+    "A note lost at sea": 2,
+}
+assert office.quests[0].summary() == "Falling off the corporate ladder (3 steps)"
+assert isinstance(office.quests[0], Quest)
+assert isinstance(office.quests[0].steps[0], Step)
+</script>
+<script type="text/plain" id="solution-12">
+class Step:
+    def __init__(self, npc, item):
+        self.npc = npc
+        self.item = item
+
+class Quest:
+    def __init__(self, name, steps):
+        self.name = name
+        self.steps = steps
+
+    def summary(self):
+        return f"{self.name} ({len(self.steps)} steps)"
+
+class Office:
+    def __init__(self):
+        self.quests = []
+
+    def add_quest(self, quest):
+        self.quests.append(quest)
+
+    def total_steps(self):
+        total = 0
+        for quest in self.quests:
+            total += len(quest.steps)
+        return total
+
+    def report(self):
+        report = {}
+        for quest in self.quests:
+            report[quest.name] = len(quest.steps)
+        return report
+
+office = Office()
+office.add_quest(Quest("Falling off the corporate ladder", [
+    Step("office worker", "letter"),
+    Step("boss", "note"),
+    Step("office worker", "note"),
+]))
+office.add_quest(Quest("A man who's hiding from something", [
+    Step("cave man", "postcard"),
+    Step("flower lady", "clean clothes"),
+    Step("cave man", "clean clothes"),
+]))
+office.add_quest(Quest("Scientists and mixed-up deliveries", [
+    Step("factory worker", "gravity data"),
+    Step("Doctor Frieb", "gravity data"),
+    Step("Doctor Frebi", "gravity data"),
+]))
+office.add_quest(Quest("An offering to the mountain temple", [
+    Step("old woman", "offering"),
+    Step("mountain guy", "offering"),
+]))
+office.add_quest(Quest("A note lost at sea", [
+    Step("Captain Steve", "wet letter"),
+    Step("Dave the Musician", "wet letter"),
+]))
+</script>
+
+<script>
+const CHAPTERS = [
+  {
+    id: "planet",
+    num: "00",
+    title: "A small planet",
+    tag: "print, strings, comments",
+    scene: `
+      <p>The planet turns under a teal sky. Nine places sit on its surface:
+      Main Square, Capital Corp., Smelly Falls, Red Cliff House, The Forest,
+      Lucero Graveyard, Man's Cave, Mountain Temple, and Scully's Beach.</p>
+      <p>A yellow PLAY button waits on the title screen. Somewhere below it,
+      a terminal is open. Your first shift starts with one line of Python.</p>
+      <p class="who">Office Worker:</p>
+      <p>"You must be the new courier. The terminal is yours. Try not to break it."</p>
+    `,
+    note: `<p>The public page is a Svelte app over a three.js r180 scene.
+    The page exposes <code>window.__webgl.start()</code>. The screenshot in
+    <code>assets/</code> is the title screen, captured on 2026-10-22.</p>`,
+    concept: [
+      `<code>print("text")</code> writes text to the terminal.`,
+      `Text inside quotes is a <strong>string</strong>.`,
+      `A line starting with <code>#</code> is a comment. Python ignores it.`,
+      `A <strong>variable</strong> stores a value. <code>planet = "small"</code> stores the string <code>"small"</code> under the name <code>planet</code>.`
+    ],
+    task: `<p>Print <code>Messenger online</code>. Then store the word <code>small</code> in the variable <code>planet</code>. Press <strong>Check</strong> when both are done.</p>`,
+    hint: `Quotes mark the text. <code>print</code> takes the text inside the parentheses. A variable assignment uses one equals sign.`,
+    hero: true
+  },
+  {
+    id: "list",
+    num: "01",
+    title: "Five on the list",
+    tag: "variables and types",
+    scene: `
+      <p>The office worker holds a clipboard. "Five deliveries," she says.
+      "Thirteen steps. Try not to lose the letters."</p>
+      <p>Each value on the clipboard has a type. A count is an integer. A note
+      is a string. A switch is a boolean: <code>True</code> or <code>False</code>.</p>
+      <p class="who">Office Worker:</p>
+      <p>"Start with the count. Then we can talk about the route."</p>
+    `,
+    note: `<p>The bundle's quest data holds five chains and 13 steps. The
+    course uses those counts in this shift. The quest controller keeps the
+    progress map under <code>questProgress</code> inside the saved
+    <code>App3D_data</code> entry.</p>`,
+    concept: [
+      `<strong>int</strong>: a whole number, such as <code>5</code>.`,
+      `<strong>float</strong>: a decimal number, such as <code>2.5</code>.`,
+      `<strong>str</strong>: text, such as <code>"You"</code>.`,
+      `<strong>bool</strong>: <code>True</code> or <code>False</code> (capital first letter).`,
+      `<code>type(value)</code> tells you the type.`
+    ],
+    task: `<p>Set <code>deliveries</code> to <code>5</code>, <code>total_steps</code> to <code>13</code>, and <code>rush_order</code> to <code>True</code>. Leave <code>courier_name</code> as <code>"You"</code>. Keep the print line.</p>`,
+    hint: `Do not put quotes around numbers or around <code>True</code>.`,
+    hero: false
+  },
+  {
+    id: "queue",
+    num: "02",
+    title: "The queue",
+    tag: "lists",
+    scene: `
+      <p>Five jobs sit in a queue. The first job is the office worker's letter.
+      The last job is Dave's wet note from the sea.</p>
+      <p>A list keeps the order. You can read by position, count the items,
+      add one at the end, and remove the last one.</p>
+      <p class="who">Office Worker:</p>
+      <p>"The queue is the queue. Do not sort it by vibes."</p>
+    `,
+    note: `<p>The five quest ids are <code>quest-employee</code>,
+    <code>quest-caveman</code>, <code>quest-scientists</code>,
+    <code>quest-temple</code>, and <code>quest-musician</code>. The course
+    uses short names for the same five chains.</p>`,
+    concept: [
+      `A list uses square brackets: <code>["a", "b"]</code>.`,
+      `Positions start at <code>0</code>. The last item is <code>queue[-1]</code>.`,
+      `<code>len(queue)</code> gives the number of items.`,
+      `<code>"temple" in queue</code> checks membership.`,
+      `<code>queue.append(x)</code> adds to the end. <code>queue.pop()</code> removes the last item.`
+    ],
+    task: `<p>Read the first and last job, count the queue, and check for <code>"temple"</code>. The starter already does this. Run it, then press <strong>Check</strong>.</p>`,
+    hint: `Run the code first. Read the output. Then press Check.`,
+    hero: false
+  },
+  {
+    id: "route",
+    num: "03",
+    title: "Which way?",
+    tag: "conditionals",
+    scene: `
+      <p>The main square is flat. The mountain temple is high. Capital Corp.
+      sits at the edge of the factory zone. Some packages need priority
+      handling. Some are fragile.</p>
+      <p>The dispatch desk needs a rule. A rule is a set of decisions.</p>
+      <p class="who">Office Worker:</p>
+      <p>"Temple and red cliff first. Fragile goes in a crate. Everything else
+      is standard."</p>
+    `,
+    note: `<p>This routing rule is a course model. It uses the game's zone
+    names, not the game's own dispatch code. The game's quest steps do carry
+    a <code>uiColor</code> and a <code>uiText</code> for the quest box.</p>`,
+    concept: [
+      `<code>if condition:</code> runs a block when the condition is true.`,
+      `<code>elif</code> adds another branch. <code>else</code> catches the rest.`,
+      `<code>or</code> is true when either side is true.`,
+      `<code>==</code> compares two values. One equals sign assigns; two compare.`,
+      `A function groups a decision under a name. Shift 05 covers functions in detail.`
+    ],
+    task: `<p>The helper <code>route(zone, fragile)</code> already contains the rule. Run it. Then press <strong>Check</strong> to test four cases.</p>`,
+    hint: `Read the four test cases in the output if a check fails.`,
+    hero: false
+  },
+  {
+    id: "walk",
+    num: "04",
+    title: "Walk the queue",
+    tag: "loops",
+    scene: `
+      <p>A courier walks from stop to stop. The game updates the avatar
+      position many times a second. A loop does the same work for each item in
+      a list.</p>
+      <p>The five quests have 3, 3, 3, 2, and 2 steps. The total is 13.</p>
+      <p class="who">Office Worker:</p>
+      <p>"Count the steps before you walk them."</p>
+    `,
+    note: `<p>Every quest step in the bundle has <code>ordered: true</code>.
+    The player must finish step one before step two. The course uses a list of
+    step counts to practice a loop.</p>`,
+    concept: [
+      `<code>for n in steps:</code> runs the block once for each item.`,
+      `<code>total += n</code> is shorthand for <code>total = total + n</code>.`,
+      `<code>enumerate(steps, start=1)</code> gives a running number and the item.`,
+      `<code>labels.append(...)</code> builds a new list inside the loop.`,
+      `An f-string inserts values into text: <code>f"Quest {i}"</code>.`
+    ],
+    task: `<p>Run the loop. It should print <code>13</code> and five labels. Then press <strong>Check</strong>.</p>`,
+    hint: `If the total is wrong, check the starting value of <code>total</code>.`,
+    hero: false
+  },
+  {
+    id: "label",
+    num: "05",
+    title: "A label for Dave",
+    tag: "functions",
+    scene: `
+      <p>Dave the Musician sits at Smelly Falls. Captain Steve found a wet
+      letter in an old lock box. The label must survive the water and the
+      journey.</p>
+      <p>The label has a fixed shape: <code>TO: NAME / ZONE</code>. A function
+      turns the two inputs into that shape.</p>
+      <p class="who">Captain Steve:</p>
+      <p>"It is a bit wet, but I can make out the name Dave at the top."</p>
+    `,
+    note: `<p>The game builds uppercase instructions in <code>uiText</code>,
+    such as <code>TAKE THE MYSTERY LETTER TO DAVE AT SMELLY FALLS</code>.
+    The label function is our own small version of that idea.</p>`,
+    concept: [
+      `<code>def name(parameters):</code> defines a function.`,
+      `<code>return</code> sends a value back to the caller.`,
+      `A parameter is an input name. An argument is the value you pass.`,
+      `<code>value.upper()</code> returns an uppercase copy.`,
+      `An f-string puts values inside text: <code>f"TO: {npc}"</code>.`
+    ],
+    task: `<p>Finish <code>make_label</code>. It takes a name and a zone, and returns <code>TO: NAME / ZONE</code> in capitals. For example, <code>make_label("Dave the Musician", "Smelly Falls")</code> returns <code>TO: DAVE THE MUSICIAN / SMELLY FALLS</code>.</p>`,
+    hint: `Use <code>npc.upper()</code> and <code>zone.upper()</code> inside an f-string.`,
+    hero: false
+  },
+  {
+    id: "zones",
+    num: "06",
+    title: "The nine zones",
+    tag: "dictionaries and tuples",
+    scene: `
+      <p>The planet has nine named zones. Each zone has a display name, a
+      center in 3D space, and a radius. The game shows the zone title when the
+      player enters the sphere.</p>
+      <p>A dictionary maps a short key to a larger record. A tuple keeps a
+      fixed group of values, such as three coordinates.</p>
+      <p class="who">Hacker Girl:</p>
+      <p>"It's like painting, but with code."</p>
+    `,
+    note: `<p>These nine rows come from the bundle's zone table. The
+    coordinates and radii are the observed values. The course keeps them as
+    data so the exercises use the real layout.</p>`,
+    concept: [
+      `A dictionary uses braces and key-value pairs: <code>{"temple": (...)}</code>.`,
+      `<code>zones["temple"]</code> looks up a value by key.`,
+      `<code>len(zones)</code> counts the keys.`,
+      `A tuple uses parentheses: <code>(x, y, z)</code>. Tuples do not change.`,
+      `Loop over keys with <code>for key in zones:</code>.`
+    ],
+    task: `<p>The zone table is already filled in. Read the temple name and coordinates, count the zones, and build <code>big_zones</code>: every key whose radius is at least 9. Then press <strong>Check</strong>.</p>`,
+    hint: `The radius is item <code>[2]</code> in each zone tuple. Compare it with <code>&gt;= 9</code>.`,
+    hero: false
+  },
+  {
+    id: "text",
+    num: "07",
+    title: "Text for the quest log",
+    tag: "string methods",
+    scene: `
+      <p>The quest log speaks in capitals. It gives one instruction at a
+      time. The text has to fit the box and match the zone.</p>
+      <p>Strings have methods. A method is a function attached to a value.
+      <code>"Dave".upper()</code> returns <code>"DAVE"</code>.</p>
+      <p class="who">Office Worker:</p>
+      <p>"The box is small. The instruction is not."</p>
+    `,
+    note: `<p>Exact game instructions include <code>TAKE THE OLD WOMAN'S
+    OFFERING TO THE MOUNTAIN TEMPLE</code> and <code>TAKE THE GRAVITY DATA
+    ANALYSIS TO DOCTOR FREBI, AT CAPITAL CORP</code>. Our function follows one
+    simple pattern for all zones.</p>`,
+    concept: [
+      `<code>.upper()</code> returns an uppercase copy.`,
+      `<code>.lower()</code> returns a lowercase copy.`,
+      `<code>.replace(" ", "-")</code> swaps one piece of text for another.`,
+      `<code>.replace("'", "")</code> removes apostrophes.`,
+      `An f-string can call methods inside the braces: <code>f"{name.upper()}"</code>.`
+    ],
+    task: `<p>Finish <code>quest_text</code> and <code>slug</code>. <code>quest_text("mystery letter", "Dave", "Smelly Falls")</code> returns <code>TAKE THE MYSTERY LETTER TO DAVE AT SMELLY FALLS</code>. <code>slug("Scully's Beach")</code> returns <code>scullys-beach</code>.</p>`,
+    hint: `Build <code>quest_text</code> with one f-string. Build <code>slug</code> with <code>lower</code>, then two <code>replace</code> calls.`,
+    hero: false
+  },
+  {
+    id: "errors",
+    num: "08",
+    title: "When a package is wrong",
+    tag: "errors and validation",
+    scene: `
+      <p>Doctor Frieb lives at the base of the mountain temple. Doctor Frebi
+      works at Capital Corp. Their names differ by two letters. Their mail
+      does not.</p>
+      <p>One scientist receives 63 packets of instant noodles. A box of
+      gravity data goes to the wrong lab. A missing recipient stops the
+      delivery before it starts.</p>
+      <p class="who">Doctor Frebi:</p>
+      <p>"Do you know why I received 63 packets of instant noodles?"</p>
+    `,
+    note: `<p>Both doctors and the noodle line are in the public quest data.
+    The game also models package handovers with delivery models such as
+    <code>deliveries/samplebox.drc</code> and <code>deliveries/note.drc</code>.</p>`,
+    concept: [
+      `<code>raise ValueError("message")</code> stops the function and reports a problem.`,
+      `<code>try:</code> runs code that may fail.`,
+      `<code>except ValueError as err:</code> catches that kind of error.`,
+      `A dictionary check uses <code>"to" in package</code>.`,
+      `Empty text is false: <code>not package["to"]</code> catches <code>""</code>.`
+    ],
+    task: `<p>Finish <code>check_package</code>. A package is a dict with <code>item</code> and <code>to</code>. If <code>to</code> is missing or empty, raise <code>ValueError("missing recipient")</code>. If <code>item</code> is missing or empty, raise <code>ValueError("missing item")</code>. Otherwise return <code>"ok"</code>.</p>`,
+    hint: `Check the recipient first, then the item. Use <code>not package["to"]</code> to catch an empty string.`,
+    hero: false
+  },
+  {
+    id: "class",
+    num: "09",
+    title: "The first class: Package",
+    tag: "classes and objects",
+    scene: `
+      <p>Twenty characters live on the planet. Five quests pass through
+      eleven of them. Every package has an item, a recipient, and a zone.
+      Writing three separate variables for every package will not scale.</p>
+      <p>A class is a blueprint. An object is one thing built from that
+      blueprint. The game itself defines classes for the title, the zones,
+      the quest controller, and the multiplayer client.</p>
+      <p class="who">Hacker Girl:</p>
+      <p>"They're an art form that combines creativity and technology."</p>
+    `,
+    note: `<p>The bundle defines <code>class title</code>,
+    <code>class zoneTitles</code>, and <code>class questsController</code>.
+    The course's <code>Package</code> class is a small teaching model, not a
+    copy of the game code.</p>`,
+    concept: [
+      `<code>class Package:</code> starts a blueprint.`,
+      `<code>__init__</code> runs when you create an object.`,
+      `<code>self</code> is the object being built or used.`,
+      `<code>self.item = item</code> stores an attribute on the object.`,
+      `A method is a function inside a class. It takes <code>self</code> first.`
+    ],
+    task: `<p>Finish <code>Package.__init__</code> and <code>Package.label</code>. A package stores <code>item</code>, <code>recipient</code>, and <code>zone</code>. Its label is <code>TO: RECIPIENT / ZONE</code> in capitals.</p>`,
+    hint: `Store the three parameters on <code>self</code>. The label method returns one f-string.`,
+    hero: false
+  },
+  {
+    id: "courier",
+    num: "10",
+    title: "The Courier",
+    tag: "methods and state",
+    scene: `
+      <p>The courier can hold one package. The game tracks the current
+      interaction target in a field named <code>interactingElement</code>.
+      Our courier tracks a package in the same spirit.</p>
+      <p>State is the set of values an object remembers. Methods change that
+      state. A good method refuses an impossible action.</p>
+      <p class="who">Office Worker:</p>
+      <p>"One pair of hands. One package. This is not complicated."</p>
+    `,
+    note: `<p>The bundle uses <code>interactingElement</code> to track the
+    object in reach. The avatar also tracks position and animation state. Our
+    <code>Courier</code> keeps one carried package and a delivery history.</p>`,
+    concept: [
+      `Attributes hold state: <code>self.carrying</code>, <code>self.delivered</code>.`,
+      `A method can change attributes: <code>self.carrying = package</code>.`,
+      `<code>None</code> means "no value here".`,
+      `Raise an error when a rule is broken: <code>raise ValueError("hands full")</code>.`,
+      `Return <code>True</code> or <code>False</code> to report success.`
+    ],
+    task: `<p>Finish <code>pick_up</code> and <code>deliver</code>. <code>pick_up</code> stores the package, but raises <code>ValueError("hands full")</code> if the courier already carries one. <code>deliver</code> moves the package to <code>delivered</code>, clears the hands, and returns <code>True</code>. With empty hands it returns <code>False</code>.</p>`,
+    hint: `Check <code>self.carrying is not None</code> in <code>pick_up</code>. In <code>deliver</code>, check <code>self.carrying is None</code> first.`,
+    hero: false
+  },
+  {
+    id: "inheritance",
+    num: "11",
+    title: "Special deliveries",
+    tag: "inheritance",
+    scene: `
+      <p>Some packages are urgent. Some are fragile. Both are still
+      packages: they have an item, a recipient, and a zone.</p>
+      <p>Inheritance lets a new class reuse a parent class. The child keeps
+      the parent's data and methods, and changes only what it needs.</p>
+      <p class="who">Doctor Frieb:</p>
+      <p>"Let's see... First I'll need to calculate the radius of the bike tire..."</p>
+    `,
+    note: `<p>The five quests carry colours and icons in the bundle. The
+    course turns two handling ideas into subclasses: <code>UrgentPackage</code>
+    and <code>FragilePackage</code>. These classes are teaching models.</p>`,
+    concept: [
+      `<code>class UrgentPackage(Package):</code> makes a child of <code>Package</code>.`,
+      `<code>super().__init__(...)</code> runs the parent constructor.`,
+      `A child can override a method, such as <code>label</code>.`,
+      `<code>super().label()</code> calls the parent version.`,
+      `<code>isinstance(obj, Package)</code> is true for a child object.`
+    ],
+    task: `<p>Finish both subclasses. <code>UrgentPackage</code> stores <code>hours</code> and puts <code>URGENT / </code> before the normal label. <code>FragilePackage</code> adds <code> / FRAGILE</code> after the normal label, and <code>handle_with_care()</code> returns <code>True</code>.</p>`,
+    hint: `Call <code>super().__init__(item, recipient, zone)</code> in the urgent class. Reuse <code>super().label()</code> in both label methods.`,
+    hero: false
+  },
+  {
+    id: "office",
+    num: "12",
+    title: "The delivery office",
+    tag: "composition and the final shift",
+    scene: `
+      <p>Night falls on the small planet. The queue has five quests and 13
+      steps. The office needs one object that holds them all.</p>
+      <p>Composition means "has a". An office has quests. A quest has steps.
+      This is the other great relation in object-oriented programming (OOP),
+      next to inheritance's "is a".</p>
+      <p class="who">Office Worker:</p>
+      <p>"If the terminal can count the steps, I can go home."</p>
+    `,
+    note: `<p>The bundle's <code>questsController</code> holds the five
+    chains and saves progress in <code>questProgress</code>. This final
+    exercise rebuilds that structure in plain Python, with the same five
+    quest names and the same 13 steps.</p>`,
+    concept: [
+      `An object can hold other objects in an attribute: <code>self.quests</code>.`,
+      `<code>self.quests.append(quest)</code> adds a quest to the office.`,
+      `A loop over <code>self.quests</code> builds a total or a report.`,
+      `A dict report maps each quest name to its step count.`,
+      `Composition keeps each class small and gives each one a clear job.`
+    ],
+    task: `<p>Finish the three <code>Office</code> methods. <code>add_quest</code> appends a quest. <code>total_steps</code> returns the sum of all step counts. <code>report</code> returns a dict from quest name to step count. The five quests are already built for you.</p>`,
+    hint: `Use <code>len(quest.steps)</code>. Build the report with an empty dict and a loop.`,
+    hero: false
+  }
+];
+
+const STORE_PROGRESS = "messenger-python-progress-v1";
+const STORE_DRAFT = "messenger-python-draft-v1:";
+const STORE_LAST = "messenger-python-last-v1";
+
+const $ = (sel, root) => (root || document).querySelector(sel);
+const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
+
+function readStore(key, fallback) {
+  try {
+    const value = localStorage.getItem(key);
+    return value === null ? fallback : value;
+  } catch (_) {
+    return fallback;
+  }
+}
+function writeStore(key, value) {
+  try { localStorage.setItem(key, value); } catch (_) {}
+}
+function readProgress() {
+  try { return new Set(JSON.parse(readStore(STORE_PROGRESS, "[]"))); }
+  catch (_) { return new Set(); }
+}
+function saveProgress() {
+  writeStore(STORE_PROGRESS, JSON.stringify(Array.from(completed)));
+}
+function getDraft(ch) {
+  return readStore(STORE_DRAFT + ch.id, null);
+}
+function saveDraft(ch, code) {
+  writeStore(STORE_DRAFT + ch.id, code);
+}
+function starterOf(ch) {
+  const el = document.getElementById("starter-" + ch.num);
+  return el ? el.textContent.replace(/^\n/, "").replace(/\s+$/, "") : "";
+}
+function testsOf(ch) {
+  const el = document.getElementById("tests-" + ch.num);
+  return el ? el.textContent.trim() : "";
+}
+function solutionOf(ch) {
+  const el = document.getElementById("solution-" + ch.num);
+  return el ? el.textContent.replace(/^\n/, "").replace(/\s+$/, "") : "";
+}
+function escapeHtml(text) {
+  return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+let completed = readProgress();
+let currentIndex = 0;
+let worker = null;
+let activeRun = null;
+let pyReady = false;
+let runSeq = 0;
+
+const host = $("#chapter-host");
+const rail = $("#rail-list");
+const statusEl = $("#py-status");
+const statusText = $("#py-status-text");
+
+function setStatus(text, kind) {
+  statusText.textContent = text;
+  statusEl.dataset.kind = kind || "idle";
+}
+
+function updateProgress() {
+  const total = CHAPTERS.length;
+  const done = completed.size;
+  $("#progress-text").textContent = done + " / " + total + " shifts";
+  $("#progress-bar").style.width = (100 * done / total) + "%";
+  CHAPTERS.forEach((ch) => {
+    const btn = $('#rail-list button[data-ch="' + ch.id + '"]');
+    if (!btn) return;
+    const ok = btn.querySelector(".ok");
+    if (ok) ok.textContent = completed.has(ch.id) ? "complete" : "";
+  });
+}
+
+function renderRail() {
+  rail.innerHTML = CHAPTERS.map((ch, i) => {
+    const done = completed.has(ch.id) ? "complete" : "";
+    return '<li><button type="button" data-ch="' + ch.id + '" data-i="' + i + '">' +
+      '<span class="n">' + ch.num + '</span>' +
+      '<span class="t">' + ch.title + '</span>' +
+      '<span class="ok">' + done + '</span>' +
+      '</button></li>';
+  }).join("");
+  $$("#rail-list button").forEach((btn) => {
+    btn.addEventListener("click", () => goTo(Number(btn.dataset.i), true));
+  });
+  markRailCurrent();
+}
+
+function markRailCurrent() {
+  $$("#rail-list button").forEach((btn) => {
+    if (Number(btn.dataset.i) === currentIndex) btn.setAttribute("aria-current", "step");
+    else btn.removeAttribute("aria-current");
+  });
+}
+
+function goTo(index, updateHash) {
+  if (activeRun) return;
+  if (index < 0 || index >= CHAPTERS.length) return;
+  currentIndex = index;
+  const ch = CHAPTERS[index];
+  writeStore(STORE_LAST, ch.id);
+  if (updateHash) {
+    try { history.replaceState(null, "", "#" + ch.id); } catch (_) {}
+  }
+  renderChapter(ch);
+  markRailCurrent();
+  const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+}
+
+function renderChapter(ch) {
+  const isDone = completed.has(ch.id);
+  const startMsg = pyReady ? "Python is ready. Press Run." : "Python is asleep. Press Run to wake it.";
+  const hero = ch.hero ? `
+    <section class="hero" aria-label="Title screen">
+      <div class="hero-copy">
+        <h2>MESSENGER</h2>
+        <p>A small planet. Five deliveries. One Python terminal.</p>
+        <p class="small">Learn Python from the first <code>print</code> to
+        object-oriented programming (OOP, or POO in Portuguese). Every shift
+        uses a real detail from the Messenger game by abeto.co.</p>
+        <p class="small">Challenges run in your browser with Pyodide.</p>
+      </div>
+      <figure class="hero-shot">
+        <img src="assets/messenger-title.png" width="780" height="493" alt="Title screen of Messenger: a small planet with a yellow Play button.">
+        <figcaption>Title screen, captured 2026-10-22. Messenger by abeto.co.</figcaption>
+      </figure>
+    </section>` : "";
+
+  const prev = currentIndex > 0 ? CHAPTERS[currentIndex - 1] : null;
+  const next = currentIndex < CHAPTERS.length - 1 ? CHAPTERS[currentIndex + 1] : null;
+
+  host.innerHTML = `
+    ${hero}
+    <header class="chapter-head">
+      <span class="kicker">Shift ${ch.num}${isDone ? " · complete" : ""}</span>
+      <div class="chapter-title">
+        <span class="chapter-num" aria-hidden="true">${ch.num}</span>
+        <div>
+          <h1>${ch.title}</h1>
+          <p class="chapter-tag">${ch.tag}</p>
+        </div>
+      </div>
+    </header>
+
+    <section class="panel scene" aria-label="Story">
+      <h2>Dispatch</h2>
+      ${ch.scene}
+    </section>
+
+    <section class="panel field" aria-label="Field note">
+      <span class="label">Field note from the bundle</span>
+      ${ch.note}
+    </section>
+
+    <section class="panel concept" aria-label="Python idea">
+      <span class="label">Python idea</span>
+      <ul>${ch.concept.map((item) => "<li>" + item + "</li>").join("")}</ul>
+    </section>
+
+    <section class="panel task" aria-label="Your task">
+      <span class="label">Your task</span>
+      ${ch.task}
+      <div class="editor-wrap">
+        <div class="editor-bar">
+          <span class="file">shift_${ch.num}.py</span>
+          <span class="spacer"></span>
+          <button class="mini" type="button" id="reset-code">Reset</button>
+        </div>
+        <label class="sr-only" for="code">Python code for shift ${ch.num}</label>
+        <textarea class="editor" id="code" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" type="button" id="run-code">Run</button>
+        <button class="btn btn-check" type="button" id="check-code">Check</button>
+        <span class="run-note" id="run-note">Ctrl + Enter runs the code.</span>
+      </div>
+      <pre class="output" id="output" aria-live="polite" tabindex="0">${startMsg}</pre>
+      <details>
+        <summary>Hint</summary>
+        <p>${ch.hint}</p>
+      </details>
+      <details>
+        <summary>Show a working solution</summary>
+        <pre class="solution-pre"><code>${escapeHtml(solutionOf(ch))}</code></pre>
+      </details>
+    </section>
+
+    <nav class="chapter-nav" aria-label="Chapter navigation">
+      ${prev ? '<button class="btn" type="button" id="prev-ch">← ' + prev.title + '</button>' : '<span></span>'}
+      ${next ? '<button class="btn btn-primary" type="button" id="next-ch">' + next.title + ' →</button>' : '<span></span>'}
+    </nav>
+
+    <footer class="footer">
+      <p><strong>Sources.</strong> The technical details come from the public
+      page bundle at <a href="https://messenger.abeto.co/" rel="noopener">messenger.abeto.co</a>,
+      captured on 2026-10-22. Read the <a href="reverse-engineering.md">reverse-engineering dossier</a>
+      for the evidence and the limits.</p>
+      <p>Messenger belongs to <a href="https://abeto.co" rel="noopener">abeto.co</a>.
+      This is an independent study companion. Challenges run in a web worker with
+      <a href="https://pyodide.org/" rel="noopener">Pyodide</a>; the first run needs a network
+      connection to the CDN.</p>
+    </footer>
+  `;
+
+  const ta = $("#code");
+  ta.value = getDraft(ch) === null ? starterOf(ch) : getDraft(ch);
+  ta.addEventListener("input", () => {
+    saveDraft(ch, ta.value);
+    $("#run-note").textContent = "Draft saved in this browser.";
+  });
+  ta.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      ta.blur();
+      return;
+    }
+    if (event.key === "Tab" && !event.shiftKey) {
+      event.preventDefault();
+      const start = ta.selectionStart;
+      const end = ta.selectionEnd;
+      ta.value = ta.value.slice(0, start) + "    " + ta.value.slice(end);
+      ta.selectionStart = ta.selectionEnd = start + 4;
+      saveDraft(ch, ta.value);
+    }
+    if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+      event.preventDefault();
+      runCurrent(false);
+    }
+  });
+
+  $("#reset-code").addEventListener("click", () => {
+    ta.value = starterOf(ch);
+    saveDraft(ch, ta.value);
+    $("#run-note").textContent = "Starter code restored.";
+    $("#output").textContent = "Ready.";
+    $("#output").classList.remove("err");
+  });
+  $("#run-code").addEventListener("click", () => runCurrent(false));
+  $("#check-code").addEventListener("click", () => runCurrent(true));
+  if (prev) $("#prev-ch").addEventListener("click", () => goTo(currentIndex - 1, true));
+  if (next) $("#next-ch").addEventListener("click", () => goTo(currentIndex + 1, true));
+  if (isDone) $("#run-note").textContent = "You passed this shift. You can run it again.";
+  updateProgress();
+}
+
+function appendOutput(text) {
+  const out = $("#output");
+  if (!out) return;
+  if (out.dataset.fresh !== "no") {
+    out.textContent = "";
+    out.dataset.fresh = "no";
+    out.classList.remove("err");
+  }
+  out.textContent += text;
+  out.scrollTop = out.scrollHeight;
+}
+
+function showOutput(text, isError) {
+  const out = $("#output");
+  if (!out) return;
+  out.textContent = text;
+  out.dataset.fresh = "no";
+  out.classList.toggle("err", !!isError);
+  out.scrollTop = out.scrollHeight;
+}
+
+function setBusy(busy) {
+  const run = $("#run-code");
+  const check = $("#check-code");
+  if (run) run.disabled = busy;
+  if (check) check.disabled = busy;
+  $$("#rail-list button, #prev-ch, #next-ch").forEach((button) => { button.disabled = busy; });
+  if (busy) setStatus("Python working", "busy");
+  else setStatus("Python ready", "ready");
+}
+
+function wakeWorker() {
+  if (worker) return worker;
+  const source = $("#py-worker").textContent;
+  const blob = new Blob([source], { type: "text/javascript" });
+  const url = URL.createObjectURL(blob);
+  worker = new Worker(url);
+  pyReady = false;
+  setStatus("Python waking up", "busy");
+  worker.onmessage = onWorkerMessage;
+  worker.onerror = (event) => {
+    if (activeRun) clearTimeout(activeRun.timer);
+    pyReady = false;
+    const dead = worker;
+    worker = null;
+    if (dead) dead.terminate();
+    activeRun = null;
+    setBusy(false);
+    setStatus("Python failed", "bad");
+    const note = $("#run-note");
+    if (note) note.textContent = "Python did not start. Press Run to try again.";
+    showOutput("Could not load Pyodide. Check the network connection to cdn.jsdelivr.net and reload the page.", true);
+  };
+  return worker;
+}
+
+function onWorkerMessage(event) {
+  if (!worker) return;
+  const msg = event.data || {};
+  if (msg.type === "ready") {
+    pyReady = true;
+    if (activeRun) watchExecution(activeRun.id);
+    if (!activeRun) setStatus("Python ready", "ready");
+    const note = $("#run-note");
+    if (note && !activeRun) note.textContent = "Python " + (msg.version || "") + " is ready.";
+    return;
+  }
+  if (msg.type === "boot-error") {
+    if (activeRun) clearTimeout(activeRun.timer);
+    pyReady = false;
+    const dead = worker;
+    worker = null;
+    if (dead) dead.terminate();
+    activeRun = null;
+    setBusy(false);
+    setStatus("Python failed", "bad");
+    const note = $("#run-note");
+    if (note) note.textContent = "Python did not start. Press Run to try again.";
+    showOutput("Pyodide could not start: " + msg.message, true);
+    return;
+  }
+  if (!activeRun || msg.id !== activeRun.id) return;
+  if (msg.type === "out") {
+    appendOutput(msg.text);
+    return;
+  }
+  if (msg.type === "done") {
+    clearTimeout(activeRun.timer);
+    const wasCheck = activeRun.check;
+    const ch = CHAPTERS[currentIndex];
+    activeRun = null;
+    setBusy(false);
+    if (wasCheck) {
+      completed.add(ch.id);
+      saveProgress();
+      updateProgress();
+      appendOutput("Passed. Shift " + ch.num + " is complete.\n");
+      $("#run-note").textContent = "Shift complete.";
+    } else {
+      appendOutput("Ran. No tests were checked.\n");
+      $("#run-note").textContent = "Ran. Press Check to test the shift.";
+    }
+    return;
+  }
+  if (msg.type === "error") {
+    clearTimeout(activeRun.timer);
+    const wasCheck = activeRun.check;
+    activeRun = null;
+    setBusy(false);
+    appendOutput(msg.message);
+    const out = $("#output");
+    if (out) out.classList.add("err");
+    $("#run-note").textContent = wasCheck
+      ? "Not yet. Read the last line of the error."
+      : "The code stopped with an error.";
+  }
+}
+
+function stopActiveRun(message, noteText) {
+  if (!activeRun) return;
+  clearTimeout(activeRun.timer);
+  activeRun = null;
+  if (worker) {
+    worker.terminate();
+    worker = null;
+  }
+  pyReady = false;
+  setBusy(false);
+  setStatus("Python restarting", "bad");
+  const note = $("#run-note");
+  if (note) note.textContent = noteText;
+  showOutput(message, true);
+}
+
+function watchExecution(id) {
+  if (!activeRun || activeRun.id !== id) return;
+  clearTimeout(activeRun.timer);
+  activeRun.timer = setTimeout(() => {
+    if (!activeRun || activeRun.id !== id) return;
+    stopActiveRun(
+      "Stopped after 15 seconds. Check for an endless loop. Press Run to restart Python.",
+      "Stopped after 15 seconds."
+    );
+  }, 15000);
+}
+
+function watchBoot(id) {
+  if (!activeRun || activeRun.id !== id) return;
+  clearTimeout(activeRun.timer);
+  activeRun.timer = setTimeout(() => {
+    if (!activeRun || activeRun.id !== id) return;
+    stopActiveRun(
+      "Python did not finish loading. Check the network and press Run to try again.",
+      "Python did not finish loading."
+    );
+  }, 90000);
+}
+
+function runCurrent(check) {
+  if (activeRun) return;
+  const ch = CHAPTERS[currentIndex];
+  const ta = $("#code");
+  if (!ta) return;
+  const code = ta.value;
+  const tests = check ? testsOf(ch) : "";
+  const w = wakeWorker();
+  if (!w) return;
+  const out = $("#output");
+  out.textContent = "";
+  out.dataset.fresh = "no";
+  out.classList.remove("err");
+  runSeq += 1;
+  const id = runSeq;
+  activeRun = { id: id, check: !!check, timer: null };
+  if (pyReady) watchExecution(id);
+  else watchBoot(id);
+  setBusy(true);
+  w.postMessage({ type: "run", id: id, code: code, tests: tests });
+}
+
+function initialIndex() {
+  const hash = (location.hash || "").replace(/^#/, "");
+  if (hash) {
+    const found = CHAPTERS.findIndex((ch) => ch.id === hash);
+    if (found >= 0) return found;
+  }
+  const last = readStore(STORE_LAST, "");
+  const found = CHAPTERS.findIndex((ch) => ch.id === last);
+  return found >= 0 ? found : 0;
+}
+
+const skipLink = $(".skip-link");
+if (skipLink) {
+  skipLink.addEventListener("click", (event) => {
+    event.preventDefault();
+    const main = $("#main");
+    if (!main) return;
+    main.focus();
+    const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    main.scrollIntoView({ block: "start", behavior: reduceMotion ? "auto" : "smooth" });
+  });
+}
+
+renderRail();
+updateProgress();
+goTo(initialIndex(), false);
+</script>
+</body>
+</html>

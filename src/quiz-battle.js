@@ -8,8 +8,10 @@
   }
 
   var originalEmit = bus.emit.bind(bus);
-  var passed = Object.create(null);
+  var ORDER = ["office-worker-2", "caveman", "factory-worker-a", "oldwoman", "diver"];
+  var passed = loadPassed();
   var pendingNpc = null;
+  var lockTimer = 0;
   var active = null;
   var ui = null;
 
@@ -25,6 +27,21 @@
     "diver": ["quest-musician", 0]
   };
 
+  function loadPassed() {
+    try {
+      var saved = JSON.parse(localStorage.getItem("python101_battle_passed") || "{}");
+      return saved && typeof saved === "object" ? saved : Object.create(null);
+    } catch (error) {
+      return Object.create(null);
+    }
+  }
+
+  function savePassed() {
+    try {
+      localStorage.setItem("python101_battle_passed", JSON.stringify(passed));
+    } catch (error) {}
+  }
+
   function stepComplete(npcId) {
     var gate = GATES[npcId];
     if (!gate) {
@@ -39,14 +56,51 @@
     }
   }
 
+  function cleared(npcId) {
+    return Boolean(passed[npcId]) || stepComplete(npcId);
+  }
+
+  function firstMissing(npcId) {
+    var index = ORDER.indexOf(npcId);
+    if (index < 0) {
+      return null;
+    }
+    for (var i = 0; i < index; i++) {
+      if (!cleared(ORDER[i])) {
+        return ORDER[i];
+      }
+    }
+    return null;
+  }
+
   function shouldGate(npcId, npc) {
     if (npc && npc._questEnabled === false) {
       return false;
     }
-    if (!bank[npcId] || !GATES[npcId] || passed[npcId]) {
+    if (!bank[npcId] || !GATES[npcId] || cleared(npcId)) {
       return false;
     }
-    return !stepComplete(npcId);
+    return true;
+  }
+
+  function showLock(npcId) {
+    var missing = firstMissing(npcId);
+    var data = missing && bank[missing];
+    var node = document.getElementById("p101-lock");
+    if (!node) {
+      node = document.createElement("div");
+      node.id = "p101-lock";
+      node.setAttribute("role", "status");
+      document.body.appendChild(node);
+    }
+    node.textContent = data
+      ? "Python Center: finish " + data.shift + " first. Then come back for " + bank[npcId].shift + "."
+      : "Python Center: finish the earlier shifts first.";
+    node.classList.add("is-visible");
+    window.clearTimeout(lockTimer);
+    lockTimer = window.setTimeout(function () {
+      node.classList.remove("is-visible");
+    }, 4200);
   }
 
   function build() {
@@ -270,6 +324,7 @@
 
     if (result === "win") {
       passed[active.npcId] = true;
+      savePassed();
       ui.prompt.textContent = "The " + active.data.opponent.toLowerCase() + " signs off this shift.";
       ui.progress.textContent = "Cleared with " + active.correct + " correct answers";
       ui.feedback.textContent = "Shift cleared. The next step is yours.";
@@ -339,6 +394,10 @@
       var npc = arguments[1];
       var npcId = typeof npc === "string" ? npc : npc && npc._id;
       if (npcId && shouldGate(npcId, npc)) {
+        if (firstMissing(npcId)) {
+          showLock(npcId);
+          return true;
+        }
         if (!active || active.npcId !== npcId) {
           pendingNpc = npc;
           openBattle(npcId);
@@ -355,6 +414,9 @@
     close: closeBattle,
     isOpen: function () {
       return Boolean(active);
-    }
+    },
+    cleared: cleared,
+    firstMissing: firstMissing,
+    order: ORDER.slice()
   };
 })();
