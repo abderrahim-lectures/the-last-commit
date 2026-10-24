@@ -1,0 +1,491 @@
+.p101-battle {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  box-sizing: border-box;
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  color: #20262c;
+}
+
+.p101-battle[hidden] {
+  display: none;
+}
+
+.p101-backdrop {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(196, 224, 232, 0.18), transparent 42%),
+    rgba(6, 11, 15, 0.82);
+  backdrop-filter: blur(5px);
+}
+
+.p101-card {
+  position: relative;
+  width: min(920px, 100%);
+  max-height: calc(100vh - 36px);
+  overflow: auto;
+  border: 4px solid #20262c;
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 252, 241, 0.98), rgba(233, 218, 184, 0.98)),
+    #f4e8cb;
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.45),
+    inset 0 0 0 3px rgba(255, 255, 255, 0.55);
+  outline: none;
+}
+
+.p101-card::before {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border: 1px solid rgba(32, 38, 44, 0.18);
+  border-radius: 11px;
+  pointer-events: none;
+}
+
+.p101-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  padding: 22px 26px 18px;
+  border-bottom: 2px solid rgba(32, 38, 44, 0.16);
+}
+
+.p101-fighter {
+  min-width: 0;
+}
+
+.p101-player {
+  text-align: left;
+}
+
+.p101-opponent {
+  text-align: right;
+}
+
+.p101-fighter-name {
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #3b444c;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.p101-hp-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.p101-opponent .p101-hp-row {
+  flex-direction: row-reverse;
+}
+
+.p101-hp-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #5b666f;
+}
+
+.p101-hp-track {
+  flex: 1;
+  height: 12px;
+  overflow: hidden;
+  border: 2px solid #20262c;
+  border-radius: 999px;
+  background: #c7bda8;
+}
+
+.p101-hp-fill {
+  height: 100%;
+  width: 100%;
+  border-radius: 999px;
+  background: #5fbf7a;
+  transition: width 240ms ease, background 240ms ease;
+}
+
+.p101-hp-fill.is-mid {
+  background: #e3b341;
+}
+
+.p101-hp-fill.is-low {
+  background: #c25959;
+}
+
+.p101-hp-text {
+  min-width: 56px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #4b555e;
+  white-space: nowrap;
+}
+
+.p101-vs {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border: 3px solid #20262c;
+  border-radius: 50%;
+  background: #f0c95e;
+  box-shadow: 0 4px 0 #20262c;
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+.p101-body {
+  padding: 24px 28px 26px;
+}
+
+.p101-kicker {
+  margin-bottom: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: #c25959;
+}
+
+.p101-title {
+  margin: 0 0 12px;
+  font-size: clamp(24px, 4vw, 36px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: #20262c;
+}
+
+.p101-prompt {
+  min-height: 52px;
+  margin: 0 0 18px;
+  font-size: clamp(16px, 2.2vw, 20px);
+  line-height: 1.4;
+  color: #2f383f;
+}
+
+.p101-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.p101-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 58px;
+  padding: 10px 14px;
+  border: 2px solid #20262c;
+  border-radius: 12px;
+  background: rgba(255, 253, 246, 0.9);
+  box-shadow: 0 4px 0 rgba(32, 38, 44, 0.9);
+  color: #20262c;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+
+.p101-option:hover:not(:disabled),
+.p101-option:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 rgba(32, 38, 44, 0.9);
+  background: #fff;
+  outline: none;
+}
+
+.p101-option:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 rgba(32, 38, 44, 0.9);
+}
+
+.p101-option:disabled {
+  cursor: default;
+}
+
+.p101-key {
+  display: grid;
+  place-items: center;
+  flex: 0 0 26px;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: #20262c;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.p101-option-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.p101-option.is-correct {
+  background: #d8f3de;
+  border-color: #2f7f4d;
+  box-shadow: 0 4px 0 #2f7f4d;
+}
+
+.p101-option.is-correct .p101-key {
+  background: #2f7f4d;
+}
+
+.p101-option.is-wrong {
+  background: #f6d8d5;
+  border-color: #a63f3f;
+  box-shadow: 0 4px 0 #a63f3f;
+}
+
+.p101-option.is-wrong .p101-key {
+  background: #a63f3f;
+}
+
+.p101-feedback {
+  min-height: 48px;
+  margin: 16px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: #46515a;
+}
+
+.p101-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(32, 38, 44, 0.16);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #6b747b;
+}
+
+.p101-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.p101-action {
+  min-width: 132px;
+  padding: 12px 18px;
+  border: 2px solid #20262c;
+  border-radius: 10px;
+  background: #f0c95e;
+  box-shadow: 0 4px 0 #20262c;
+  color: #20262c;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.p101-action:hover,
+.p101-action:focus-visible {
+  background: #ffd96d;
+  outline: none;
+  transform: translateY(-2px);
+}
+
+.p101-action:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #20262c;
+}
+
+.p101-player.is-hit,
+.p101-opponent.is-hit {
+  animation: p101-hit 360ms ease;
+}
+
+@keyframes p101-hit {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-6px);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+  75% {
+    transform: translateX(-3px);
+  }
+}
+
+body.p101-battle-open {
+  overflow: hidden;
+}
+
+@media (max-height: 620px) {
+  .p101-battle {
+    padding: 8px;
+  }
+
+  .p101-card {
+    max-height: calc(100vh - 16px);
+  }
+
+  .p101-top {
+    padding: 14px 20px 12px;
+  }
+
+  .p101-body {
+    padding: 16px 20px 18px;
+  }
+
+  .p101-title {
+    margin-bottom: 8px;
+    font-size: clamp(20px, 3.5vw, 28px);
+  }
+
+  .p101-prompt {
+    min-height: 0;
+    margin-bottom: 12px;
+  }
+
+  .p101-option {
+    min-height: 48px;
+  }
+
+  .p101-feedback {
+    min-height: 36px;
+    margin-top: 12px;
+  }
+
+  .p101-foot {
+    margin-top: 8px;
+    padding-top: 8px;
+  }
+
+  .p101-actions {
+    margin-top: 12px;
+  }
+}
+
+@media (max-height: 430px) {
+  .p101-battle {
+    padding: 6px;
+  }
+
+  .p101-card {
+    max-height: calc(100vh - 12px);
+  }
+
+  .p101-top {
+    padding: 10px 18px 8px;
+  }
+
+  .p101-body {
+    padding: 12px 18px 14px;
+  }
+
+  .p101-title {
+    font-size: 22px;
+    margin-bottom: 6px;
+  }
+
+  .p101-prompt {
+    margin-bottom: 8px;
+    font-size: 15px;
+  }
+
+  .p101-option {
+    min-height: 42px;
+    padding: 7px 12px;
+  }
+
+  .p101-feedback {
+    min-height: 0;
+    margin-top: 8px;
+  }
+
+  .p101-foot {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .p101-battle {
+    padding: 10px;
+  }
+
+  .p101-card {
+    max-height: calc(100vh - 20px);
+  }
+
+  .p101-top {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 18px 18px 14px;
+  }
+
+  .p101-opponent {
+    text-align: left;
+  }
+
+  .p101-opponent .p101-hp-row {
+    flex-direction: row;
+  }
+
+  .p101-vs {
+    display: none;
+  }
+
+  .p101-body {
+    padding: 18px;
+  }
+
+  .p101-options {
+    grid-template-columns: 1fr;
+  }
+
+  .p101-foot {
+    display: block;
+  }
+
+  .p101-foot span {
+    display: block;
+    margin-top: 4px;
+  }
+
+  .p101-actions {
+    flex-direction: column;
+  }
+
+  .p101-action {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .p101-hp-fill,
+  .p101-option,
+  .p101-action {
+    transition: none;
+  }
+
+  .p101-player.is-hit,
+  .p101-opponent.is-hit {
+    animation: none;
+  }
+}
