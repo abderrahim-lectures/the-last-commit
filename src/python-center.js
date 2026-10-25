@@ -18,7 +18,7 @@
   var NOTES = {
     learn: 'Shift 00 starts with <code>print("Messenger online")</code>. Press Run, then Check.',
     play: "Change the toy and press Run. Python runs in this browser tab.",
-    guide: "Find the PC, press E, type one line, check it, then take the next shift."
+    guide: "Find the ATM computer on the wall, press E, type one line, check it, then take the next shift."
   };
 
   function buildPrompt() {
@@ -79,13 +79,13 @@
       '  <p class="p101-guide-kicker">ROUTE CARD</p>',
       "  <h2>Your first five minutes</h2>",
       "  <p class=\"p101-guide-lead\">Follow this script at your own pace. The PC keeps your place.</p>",
-      "  <p class=\"p101-guide-classic\"><strong>Classic route:</strong> in the Gen 1-7 games, the PC sits inside the Center. This one sits on the office floor. Walk up and press E.</p>",
+      "  <p class=\"p101-guide-classic\"><strong>Classic route:</strong> in the Gen 1-7 games, the PC sits inside the Center. It sits on the office wall by the street. Walk up and press E.</p>",
       '  <div class="p101-route-posts">',
       '    <button type="button" data-go="learn"><span>01</span><strong>Learn PC</strong><small>13 shifts, from print to classes</small></button>',
       '    <button type="button" data-go="play"><span>02</span><strong>Play PC</strong><small>Type Python and run it for fun</small></button>',
       "  </div>",
       '  <ol class="p101-route-steps">',
-      "    <li><span>1</span><div><strong>Find the Python PC.</strong><p>Walk to the small desk on the office floor. Press E when the prompt appears.</p></div></li>",
+      "    <li><span>1</span><div><strong>Find the Python PC.</strong><p>Walk to the ATM computer on the office wall. Press E when the prompt appears.</p></div></li>",
       "    <li><span>2</span><div><strong>Open Shift 00.</strong><p>Read &ldquo;A small planet&rdquo;. It introduces <code>print()</code>, strings, comments, and variables.</p></div></li>",
       '    <li><span>3</span><div><strong>Type one line.</strong><p>In the editor, write <code>print("Messenger online")</code>. Press <b>Run</b> and read the output.</p></div></li>',
       "    <li><span>4</span><div><strong>Press Check.</strong><p>Tests compare your output with the shift. When they pass, Shift 00 is complete.</p></div></li>",

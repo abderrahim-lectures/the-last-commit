@@ -6,7 +6,7 @@ Live: https://abderrahim-lectures.github.io/the-last-commit/
 
 ## What is inside
 
-- **Python PC** — walk up to the small street-side PC and press `E`, or click `Use PC` on the marker. The window has three posts:
+- **Python PC** — walk up to the ATM computer on the wall and press `E`, or click `Use PC` on the marker. The window has three posts:
   - **LEARN PC** — 13 shifts that start at `print()` and end at classes.
   - **PLAY PC** — a sandboxed editor. Type Python, press Run, read the output. Code runs in the browser with Pyodide.
   - **ROUTE** — a short guide for the first five minutes, from finding the PC to the first quiz battle.
