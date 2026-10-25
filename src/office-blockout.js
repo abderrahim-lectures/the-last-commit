@@ -517,34 +517,32 @@
   }
 
   function buildPc(box) {
-    box(P.slate, 0, 1.90, 0.05, 1.10, 0, 0.02, -0.10);
+    box(P.slate, 0, 1.10, 2.05, 0.62, 0, 1.05, 0);
+    box(P.teal, 0, 0.10, 2.05, 0.64, -0.55, 1.05, 0);
+    box(P.teal, 0, 0.10, 2.05, 0.64, 0.55, 1.05, 0);
+    box(P.slate, 0, 1.04, 0.20, 0.70, 0, 0.10, 0);
 
-    box(P.wood, 0, 1.60, 0.09, 0.72, 0, 0.78, 0);
-    box(P.slate, 0, 0.08, 0.74, 0.08, -0.70, 0.38, 0.28);
-    box(P.slate, 0, 0.08, 0.74, 0.08, 0.70, 0.38, 0.28);
-    box(P.slate, 0, 0.08, 0.74, 0.08, -0.70, 0.38, -0.28);
-    box(P.slate, 0, 0.08, 0.74, 0.08, 0.70, 0.38, -0.28);
+    box(P.mustard, 0.15, 1.00, 0.44, 0.10, 0, 1.94, 0.28);
+    box(P.cream, 0, 0.84, 0.28, 0.04, 0, 1.94, 0.34);
 
-    box(P.slate, 0, 0.42, 0.34, 0.36, 0.56, 0.60, -0.02);
-    box(P.teal, 0.30, 0.06, 0.06, 0.03, 0.56, 0.70, 0.16);
+    box(P.slate, 0, 0.86, 0.60, 0.06, 0, 1.52, 0.30);
+    box(P.glass, 0.60, 0.68, 0.42, 0.02, 0, 1.52, 0.34);
 
-    box(P.slate, 0, 0.34, 0.05, 0.16, 0, 0.92, -0.20);
-    box(P.slate, 0, 0.60, 0.05, 0.20, 0, 1.10, -0.20);
-    box(P.slate, 0, 0.98, 0.60, 0.08, 0, 1.32, -0.16);
-    box(P.ink, 0, 0.92, 0.54, 0.02, 0, 1.32, -0.11);
-    box(P.glass, 0.55, 0.80, 0.44, 0.02, 0, 1.32, -0.10);
-    box(P.cream, 0.20, 0.10, 0.03, 0.02, 0, 1.32, -0.09);
+    box(P.cream, 0, 0.62, 0.30, 0.04, 0, 1.12, 0.33);
+    box(P.slate, 0, 0.12, 0.08, 0.02, -0.18, 1.18, 0.36);
+    box(P.slate, 0, 0.12, 0.08, 0.02, 0, 1.18, 0.36);
+    box(P.slate, 0, 0.12, 0.08, 0.02, 0.18, 1.18, 0.36);
+    box(P.slate, 0, 0.12, 0.08, 0.02, -0.18, 1.06, 0.36);
+    box(P.slate, 0, 0.12, 0.08, 0.02, 0, 1.06, 0.36);
+    box(P.slate, 0, 0.12, 0.08, 0.02, 0.18, 1.06, 0.36);
+    box(P.slate, 0, 0.12, 0.08, 0.02, -0.18, 0.94, 0.36);
+    box(P.slate, 0, 0.12, 0.08, 0.02, 0, 0.94, 0.36);
+    box(P.coral, 0, 0.12, 0.08, 0.02, 0.18, 0.94, 0.36);
 
-    box(P.cream, 0, 0.72, 0.04, 0.24, 0, 0.84, 0.10);
-    box(P.slate, 0, 0.08, 0.02, 0.05, -0.26, 0.86, 0.10);
-    box(P.cream, 0, 0.09, 0.06, 0.11, 0.38, 0.85, 0.10);
-
-    box(P.coral, 0, 0.44, 0.44, 0.42, 0, 0.34, -0.78);
-    box(P.coral, 0, 0.44, 0.07, 0.42, 0, 0.66, -0.93);
-    box(P.slate, 0, 0.10, 0.36, 0.36, 0, 0.12, -0.78);
-
-    box(P.slate, 0, 0.06, 0.05, 0.05, 0, 1.86, -0.16);
-    box(P.mustard, 0, 0.86, 0.24, 0.05, 0, 1.99, -0.16);
+    box(P.slate, 0, 0.34, 0.03, 0.04, -0.20, 0.78, 0.33);
+    box(P.mustard, 0.30, 0.34, 0.03, 0.04, 0.20, 0.78, 0.33);
+    box(P.slate, 0, 0.16, 0.16, 0.06, 0.36, 1.02, 0.30);
+    box(P.teal, 0.35, 0.20, 0.20, 0.02, -0.32, 0.58, 0.32);
   }
 
   function watchPc(scene, pc) {
@@ -616,18 +614,34 @@
   }
 
   function makePc(scene, C) {
-    var frame = centerFrame(scene, C);
-    if (!frame) return null;
+    var object = scene.characters && scene.characters.mesh._localObject;
+    if (!object) return null;
     var group = new C.Group();
-    group.position.copy(frame.pos);
-    group.quaternion.copy(frame.quat);
+    var spawn = object._initialPosition ? object._initialPosition.clone() : object.position.clone();
+    var radius = spawn.length();
+    if (radius < 0.001) return null;
+    var up = spawn.clone().normalize();
+    var cross = new C.Vec3().crossVectors(up, new C.Vec3(0, 1, 0)).normalize();
+    group.position.copy(spawn).addScaledVector(cross, -3.5).normalize().multiplyScalar(radius);
+    var toward = cross;
+    var right = new C.Vec3().crossVectors(up, toward).normalize();
+    var matrix = scene.camera.matrix.clone();
+    matrix.elements[0] = right.x; matrix.elements[1] = right.y; matrix.elements[2] = right.z;
+    matrix.elements[4] = up.x; matrix.elements[5] = up.y; matrix.elements[6] = up.z;
+    matrix.elements[8] = toward.x; matrix.elements[9] = toward.y; matrix.elements[10] = toward.z;
+    matrix.elements[3] = matrix.elements[7] = matrix.elements[11] = 0;
+    matrix.elements[12] = matrix.elements[13] = matrix.elements[14] = 0;
+    matrix.elements[15] = 1;
+    var quat = new C.Quat();
+    quat.setFromRotationMatrix(matrix);
+    group.quaternion.copy(quat);
     var buckets = {};
     var localState = { surface: 0 };
     var box = painter(buckets, localState, C, new C.Quat(), new C.Vec3(0, 0, 0));
     buildPc(box);
     var surfaces = flush(buckets, C, C.Material, C.Geometry, C.Attr, C.Mesh, group, scene);
     scene.add(group);
-    var pc = { position: frame.pos.clone(), group: group, surfaces: surfaces };
+    var pc = { position: group.position.clone(), group: group, surfaces: surfaces };
     watchPc(scene, pc);
     return pc;
   }
